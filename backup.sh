@@ -1,8 +1,8 @@
 #!/bin/sh
 
-filename=/home/delay/db/arrivals-$(date +"%Y-%m-%d-%H:%M:%S").sql
+filename=/home/delay/db/arrivals-$(date +"%Y-%m-%d-%H:%M:%S").sqsh
 
-mysqldump --extended-insert=FALSE --no-create-info --tables delay arrivals > $filename
+mysqldump --skip-lock-tables --extended-insert=FALSE --no-create-info --tables delay arrivals > $filename
 
 sed -i 's/`//g' $filename
 

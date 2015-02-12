@@ -1,8 +1,8 @@
 #!/bin/sh
 
-filename=/home/delay/db/neighbours.sql
+filename=/home/delay/db/neighbours.sqsh
 
-mysqldump --lock-tables=false --extended-insert=FALSE --no-create-info --tables delay neighbours > $filename
+mysqldump --skip-lock-tables --extended-insert=FALSE --no-create-info --tables delay neighbours > $filename
 
 sed -i 's/`//g' $filename 
 
