@@ -6,8 +6,8 @@ CREATE TEMPORARY TABLE t1
 (
   SELECT * FROM `arrivals` 
   WHERE expire_time = 0
-  AND (stop_code_lbsl = 11469 
-  OR stop_code_lbsl = 10002)
+  AND (stop_code_lbsl = 1000 
+  OR stop_code_lbsl = 26826)
 );
 
 CREATE TEMPORARY TABLE IF NOT EXISTS t2 AS (SELECT * FROM t1);
@@ -32,23 +32,21 @@ AND t1.stop_code_lbsl < t2.stop_code_lbsl
 AND t1.arrival_time < t2.arrival_time
 ORDER BY start_time );
 
--- Observations:
--- 1. Order by length_in_secs
--- - when journey time is short, the start_time is usually in odd hours -> between 9pm and 6am
-
--- 2. There are abnormalies - explanations?
--- - journey time = 1s or 4000s
-
--- 3. 
 
 
-
-SELECT AVG(TIME_TO_SEC(TIMEDIFF(t2.arrival_time, t1.arrival_time))) length
-FROM t1 
-JOIN t2
-WHERE t1.trip_id = t2.trip_id
-AND t1.stop_code_lbsl < t2.stop_code_lbsl;
-
+SELECT t1.stop_code_lbsl start_stop,
+       t2.stop_code_lbsl end_stop, 
+       t1.route, 
+       t1.trip_id, 
+       DAYNAME(t1.arrival_time) day, 
+       HOUR(t1.arrival_time) hour,
+       TIME_TO_SEC(TIMEDIFF(t2.arrival_time, t1.arrival_time)) travel_time
+FROM (SELECT * FROM arrivals WHERE stop_code_lbsl = 1000) AS t1
+JOIN (SELECT * FROM arrivals WHERE stop_code_lbsl = 26826) AS t2
+WHERE DATE(t1.arrival_time) = DATE(t2.arrival_time)
+AND t1.trip_id = t2.trip_id
+AND t1.arrival_time < t2.arrival_time
+ORDER BY day, hour, start_stop, end_stop
 
 
 
