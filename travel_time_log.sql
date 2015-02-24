@@ -1,8 +1,8 @@
 USE delay; 
 
-DROP TABLE IF EXISTS travel_time_log; 
+DROP TABLE IF EXISTS travel_time_log_main; 
 
-CREATE TABLE travel_time_log
+CREATE TABLE travel_time_log_main
 (
 	SELECT t1.stop_code_lbsl start_stop,
 	       t2.stop_code_lbsl end_stop, 
@@ -14,10 +14,10 @@ CREATE TABLE travel_time_log
 	       HOUR(t1.arrival_time) hour,
 	       TIME_TO_SEC(TIMEDIFF(t2.arrival_time, t1.arrival_time)) travel_time
 	FROM neighbours 
-	INNER JOIN arrivals_part_2 AS t1 
+	INNER JOIN arrivals AS t1 
 		ON t1.stop_code_lbsl = neighbours.start_stop 
 		AND t1.route = neighbours.route
-	INNER JOIN arrivals_part_2 AS t2
+	INNER JOIN arrivals AS t2
 		ON t2.stop_code_lbsl = neighbours.end_stop 
 		AND t2.route = neighbours.route
 		AND t1.trip_id = t2.trip_id
