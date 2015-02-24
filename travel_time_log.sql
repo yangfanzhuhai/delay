@@ -8,7 +8,7 @@ CREATE TABLE travel_time_log
 	       t2.stop_code_lbsl end_stop, 
 	       t1.route, 
 	       t1.trip_id, 
-	       t1.vehicle_id
+	       t1.vehicle_id,
 	       DAYNAME(t1.arrival_time) day, 
 	       DATE(t1.arrival_time) date,
 	       HOUR(t1.arrival_time) hour,
