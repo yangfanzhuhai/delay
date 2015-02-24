@@ -8,6 +8,7 @@ CREATE TABLE travel_time_log
 	       t2.stop_code_lbsl end_stop, 
 	       t1.route, 
 	       t1.trip_id, 
+	       t1.vehicle_id
 	       DAYNAME(t1.arrival_time) day, 
 	       DATE(t1.arrival_time) date,
 	       HOUR(t1.arrival_time) hour,
@@ -20,6 +21,7 @@ CREATE TABLE travel_time_log
 		ON t2.stop_code_lbsl = neighbours.end_stop 
 		AND t2.route = neighbours.route
 		AND t1.trip_id = t2.trip_id
+		AND t1.vehicle_id = t2.vehicle_id
 		AND DATE(t1.arrival_time) = DATE(t2.arrival_time)
 	WHERE t1.arrival_time < t2.arrival_time
 	ORDER BY day, hour, start_stop, end_stop
