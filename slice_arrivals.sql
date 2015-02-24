@@ -1,6 +1,6 @@
 USE delay; 
 
-DROP TABLE IF EXISTS arrivals_part; 
+DROP TABLE IF EXISTS arrivals_part_2; 
 
-CREATE TABLE arrivals_part 
-(SELECT * FROM arrivals LIMIT 100000)
+CREATE TABLE arrivals_part_2 
+(SELECT * FROM arrivals LIMIT 500000)
