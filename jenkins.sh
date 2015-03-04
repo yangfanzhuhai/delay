@@ -1,2 +1,2 @@
 #!/bin/sh
-./runsql.sh < count_rows.sql
+./runsql.sh < travel_time_log.sql
