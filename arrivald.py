@@ -27,16 +27,18 @@ conn = pymysql.connect(
     port=3306,
     user='delay',
     passwd='CcwLCw3Kcs9Py33T',
+    # user='root',
+    # passwd='dta255dta',
     db='delay',
 )
 cur = conn.cursor()
 
 sql_insert = ("INSERT INTO arrivals "
               "(stop_code_lbsl, route, vehicle_id, trip_id, "
-              "arrival_time, expire_time) "
-              "VALUES (%s, %s, %s, %s, %s, %s) "
+              "arrival_time, expire_time, arrival_date) "
+              "VALUES (%s, %s, %s, %s, %s, %s, DATE(%s)) "
               "ON DUPLICATE KEY UPDATE "
-              "arrival_time=VALUES(arrival_time), "
+              "arrival_time=VALUES(arrival_time),"
               "expire_time=VALUES(expire_time)")
 
 for line in r.iter_lines():
@@ -51,6 +53,7 @@ for line in r.iter_lines():
     for i in [4, 5]:
         line[i] = int(line[i] / 1000)
         line[i] = datetime.fromtimestamp(line[i])
+    line.append(line[5])
     # print(line)
     cur.execute(sql_insert, line)
     conn.commit()
