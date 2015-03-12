@@ -1,8 +1,8 @@
 USE delay; 
 
-DROP TABLE IF EXISTS travel_time_log_main; 
+DROP TABLE IF EXISTS travel_time_log_main2; 
 
-CREATE TABLE travel_time_log_main
+CREATE TABLE travel_time_log_main2
 (
 	SELECT t1.stop_code_lbsl start_stop,
 	       t2.stop_code_lbsl end_stop, 
