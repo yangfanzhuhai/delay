@@ -12,6 +12,8 @@ CREATE TABLE travel_time_log_main2
 	       DAYNAME(t1.arrival_time) day, 
 	       t1.arrival_date date,
 	       HOUR(t1.arrival_time) hour,
+	       t1.arrival_time start_time,
+	       t2.arrival_time end_time,
 	       TIME_TO_SEC(TIMEDIFF(t2.arrival_time, t1.arrival_time)) travel_time
 	FROM neighbours 
 	INNER JOIN arrivals AS t1 
