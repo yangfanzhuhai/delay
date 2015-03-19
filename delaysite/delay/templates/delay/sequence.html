@@ -1,0 +1,26 @@
+{% if bus_sequences %}
+    {{day_of_week}}
+    hour {{h}}
+    <table>
+      <tr>
+        <td>Route</td>
+        <td>Run</td>
+        <td>Sequence</td>
+        <td>Stop Name</td>
+        <td>Stop Code LBSL</td>
+        <td>Predicted Travel Time</td>
+      </tr>
+    {% for stop, travel_time in bus_sequences %}
+        <tr>
+          <td>{{stop.route}}</td>
+          <td>{{stop.run}}</td>
+          <td>{{stop.sequence}}</td>
+          <td>{{stop.stop_name}}</td>
+          <td>{{stop.stop_code_lbsl}}</td>
+          <td>{{travel_time}}</td>
+        </tr>
+    {% endfor %}
+    </table>
+{% else %}
+    <p>No bus sequences entry are available.</p>
+{% endif %}

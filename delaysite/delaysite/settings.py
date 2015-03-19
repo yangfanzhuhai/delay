@@ -94,14 +94,26 @@ WSGI_APPLICATION = 'delaysite.wsgi.application'
 
 DATABASES = {
     'default': {
-        'NAME': 'yz10111', 
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'HOST': 'db.doc.ic.ac.uk',
-        'PORT': 5432,
-        'USER': 'yz10111',
-        'PASSWORD': 'pGmhDilp2v'
+        'NAME': 'delay', 
+        # 'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'mysql.connector.django',        
+        'HOST': '127.0.0.1',
+        'USER': 'delay',
+        'PASSWORD': 'CcwLCw3Kcs9Py33T',
+        'PORT': 3306
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'NAME': 'yz10111', 
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'HOST': 'db.doc.ic.ac.uk',
+#         'PORT': 5432,
+#         'USER': 'yz10111',
+#         'PASSWORD': 'pGmhDilp2v'
+#     }
+# }
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
 

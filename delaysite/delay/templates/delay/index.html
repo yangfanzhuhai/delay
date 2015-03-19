@@ -1,0 +1,10 @@
+{% if neighbours_list %}
+    <ul>
+    <li>Route, Start_Stop, End_Stop</li>
+    {% for neighbour in neighbours_list %}
+        <li><a href="/delay/{{ neighbour.id }}/">{{ neighbour.route }}, {{ neighbour.start_stop }}, {{neighbour.end_stop}}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No neighbours entry are available.</p>
+{% endif %}

@@ -48,4 +48,11 @@ DELIMITER ;
 CALL ROWPERROW();
 
 
+    SELECT start_stop, end_stop, day, hour, TRUNCATE(AVG(travel_time), 1) average_travel_time
+    FROM travel_time_log_main
+    WHERE travel_time > 0
+    AND start_stop = 10002
+	AND end_stop = 11469
+    GROUP BY day, hour
+
  --innodb_thread_concurrency=0 --innodb_read_io_threads=64 --innodb_write_io_threads=64
