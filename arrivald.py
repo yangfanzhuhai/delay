@@ -33,13 +33,21 @@ conn = pymysql.connect(
 )
 cur = conn.cursor()
 
-sql_insert = ("INSERT INTO arrivals "
+sql_insert = ("INSERT INTO delay_arrivals "
               "(stop_code_lbsl, route, vehicle_id, trip_id, "
               "arrival_time, expire_time, arrival_date) "
               "VALUES (%s, %s, %s, %s, %s, %s, DATE(%s)) "
               "ON DUPLICATE KEY UPDATE "
-              "arrival_time=VALUES(arrival_time),"
-              "expire_time=VALUES(expire_time)")
+              "arrival_time = CASE "
+              "WHEN TIMESTAMPDIFF(MINUTE, recorded_time, now()) < 10 "
+              "THEN VALUES(arrival_time) ELSE arrival_time END, "
+              "expire_time = CASE "
+              "WHEN TIMESTAMPDIFF(MINUTE, recorded_time, now()) < 10 "
+              "THEN VALUES(expire_time) ELSE expire_time END, "
+              "recorded_time = CASE "
+              "WHEN TIMESTAMPDIFF(MINUTE, recorded_time, now()) < 10 "
+              "THEN now() ELSE recorded_time END; ")
+
 
 for line in r.iter_lines():
     if not line:
