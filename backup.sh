@@ -1,6 +1,6 @@
 #!/bin/sh
 
-filename=/home/delay/db/delay-$(date +"%Y-%m-%d-%H:%M:%S").sql
+filename=/data/tmp/delay-$(date +"%Y-%m-%d-%H:%M:%S").sql
 
 mysqldump --extended-insert=FALSE delay > $filename
 
