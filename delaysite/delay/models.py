@@ -14,10 +14,10 @@ class Neighbours(models.Model):
 
 
 class Timetable(models.Model):
-    start_stop = models.CharField(max_length=64)
-    end_stop = models.CharField(max_length=64)
-    day = models.CharField(max_length=9)
-    hour = models.IntegerField()
+    start_stop = models.CharField(max_length=64, db_index=True)
+    end_stop = models.CharField(max_length=64, db_index=True)
+    day = models.CharField(max_length=9, db_index=True)
+    hour = models.IntegerField(db_index=True)
     average_travel_time = models.DecimalField(max_digits=11, decimal_places=1)
 
     def __str__(self):

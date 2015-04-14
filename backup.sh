@@ -2,7 +2,7 @@
 
 filename=/home/delay/db/delay-$(date +"%Y-%m-%d-%H:%M:%S").sql
 
-mysqldump --extended-insert=FALSE --tables delay > $filename
+mysqldump --extended-insert=FALSE delay > $filename
 
 sed -i 's/`//g' $filename
 
