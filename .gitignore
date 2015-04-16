@@ -4,3 +4,5 @@ bin/
 generated/
 lib/
 include/
+data/journey-planner-timetables.zip
+data/journey-planner-timetables/

@@ -36,8 +36,19 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'delay'
+    'delay',
+    'rest_framework'
 )
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ],
+    'PAGE_SIZE': 10,
+    'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend',)
+}
+
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -53,50 +64,11 @@ ROOT_URLCONF = 'delaysite.urls'
 
 WSGI_APPLICATION = 'delaysite.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/1.7/ref/settings/#databases
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
-
-# DATABASES = {
-#     'default': {
-#         'NAME': 'tfl_bus', 
-#         'ENGINE': 'sql_server.pyodbc',
-#         'HOST': 'sqlserver.doc.ic.ac.uk',
-#         'USER': 'yz10111',
-#         'PASSWORD': 'TFL2dbSS',
-#         'PORT': 1433,
-#         'OPTIONS': {
-#             'driver': 'FreeTDS',
-#             # 'dsn': 'sqlserver.doc.ic.ac.uk',
-#             'host_is_server': True,
-#             'extra_params': "TDS_VERSION=8.0"
-#         }
-#     }
-# }
-
-# DATABASES = {
-#     'default': {
-#         'NAME': 'delay', 
-#         'ENGINE': 'django.db.backends.mysql',
-#         'HOST': 'delay.doc.ic.ac.uk',
-#         'USER': 'delay',
-#         'PASSWORD': 'CcwLCw3Kcs9Py33T',
-#         'PORT': 3306
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'NAME': 'delay', 
+        'NAME': 'delay',
         # 'ENGINE': 'django.db.backends.mysql',
-        'ENGINE': 'mysql.connector.django',        
+        'ENGINE': 'mysql.connector.django',
         'HOST': '127.0.0.1',
         'USER': 'delay',
         'PASSWORD': 'CcwLCw3Kcs9Py33T',
@@ -104,18 +76,6 @@ DATABASES = {
     }
 }
 
-# DATABASES = {
-#     'default': {
-#         'NAME': 'yz10111', 
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'HOST': 'db.doc.ic.ac.uk',
-#         'PORT': 5432,
-#         'USER': 'yz10111',
-#         'PASSWORD': 'pGmhDilp2v'
-#     }
-# }
-# Internationalization
-# https://docs.djangoproject.com/en/1.7/topics/i18n/
 
 LANGUAGE_CODE = 'en-gb'
 

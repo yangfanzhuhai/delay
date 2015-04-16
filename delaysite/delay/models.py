@@ -9,9 +9,6 @@ class Neighbours(models.Model):
     def __str__(self):
         return str(self.__dict__)
 
-        # return 'route: {}, start_stop: {}, end_stop: {}'.format
-        # (self.route, self.start_stop, self.end_stop)
-
 
 class Timetable(models.Model):
     start_stop = models.CharField(max_length=64, db_index=True)
@@ -36,7 +33,10 @@ class Bus_sequences(models.Model):
     location_northing = models.IntegerField()
     heading = models.IntegerField()
     virtual_bus_stop = models.IntegerField()
+    average_travel_time = models.DecimalField(max_digits=11,
+                                              decimal_places=1,
+                                              default=0.0)
 
     def __str__(self):
-        return "route: {}, run: {}, sequence: {}, stop_code_lbsl:".format
-        (self.route, self.run, self.sequence, self.stop_code_lbsl)
+        return str(self.__dict__)
+
