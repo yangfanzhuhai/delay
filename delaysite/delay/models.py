@@ -53,3 +53,38 @@ class Arrival(object):
 
     def __str__(self):
         return str(self.__dict__)
+
+
+class BusLine(object):
+    def __init__(self, lineName):
+        self.lineName = lineName
+        self.estimatedTime = []
+
+    def putArrivalTimes(self, estimatedTime):
+        self.estimatedTime.append(estimatedTime)
+        self.estimatedTime.sort()
+
+    def __str__(self):
+        return str(self.__dict__)
+
+
+class Stop(object):
+    def __init__(self, stopPointName, latitude, longitude):
+        self.stopPointName = stopPointName
+        self.latitude = latitude
+        self.longitude = longitude
+        self.lines = []
+
+    def putLine(self, line):
+        existingLines = map(lambda x: x.lineName, self.lines)
+        if line.lineName in existingLines:
+            for l in self.lines:
+                if l.lineName == line.lineName:
+                    l.putArrivalTimes(line.estimatedTime[0])
+                    break
+        else:
+            self.lines.append(line)
+
+    def __str__(self):
+        return str(self.__dict__)
+

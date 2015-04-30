@@ -1,7 +1,7 @@
 from django.shortcuts import render
-from delay.models import Bus_sequences, Timetable, Arrival
+from delay.models import Bus_sequences, Timetable, Arrival, BusLine, Stop
 from rest_framework import viewsets
-from delay.serializers import PredictionsSerializer, ArrivalsSerializer
+import delay.serializers as s
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 import requests
@@ -21,7 +21,7 @@ def get_travel_time(bus_sequences, day, hour):
 
 
 class PredictionsViewSet(viewsets.ModelViewSet):
-    serializer_class = PredictionsSerializer
+    serializer_class = s.PredictionsSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def get_queryset(self):
@@ -48,19 +48,21 @@ def sequence(request, run_id, route_name, day, hour):
     return render(request, 'delay/sequence.html', context)
 
 
-def get_arrivals(latitude, longitude, radius):
+def get_countdown_response(latitude, longitude, radius):
     url = ('http://countdown.api.tfl.gov.uk/interfaces/ura/'
            'instant_V1?Circle={},{},{}'
            '&ReturnList=StopPointName,Latitude,'
            'Longitude,LineName,EstimatedTime#').format(
            latitude, longitude, radius)
-
     r = requests.get(
         url,
         auth=('LiveBus95085', 'rU9HUx4ZEm')
     )
+    return r
 
-    output = []
+
+def process_countdown_info(r):
+    result = []
     for line in r.iter_lines():
         if not line:
             continue
@@ -68,11 +70,26 @@ def get_arrivals(latitude, longitude, radius):
         if line[0] != 1:
             continue
         line = line[1:]
+        result.append(line)
+    return result
+
+
+def get_arrivals(latitude, longitude, radius):
+    r = get_countdown_response(latitude, longitude, radius)
+    lines = process_countdown_info(r)
+    groups = {}
+    for line in lines:
         arrival = Arrival(*line)
-        output.append(arrival)
-        stops = set(map(lambda x: x.stopPointName, output))
-        groups = [[y for y in output if y.stopPointName == x] for x in stops]
-    return groups
+        busLine = BusLine(lineName=arrival.lineName)
+        busLine.putArrivalTimes(arrival.estimatedTime)
+        if arrival.stopPointName in groups:
+            groups[arrival.stopPointName].putLine(busLine)
+        else:
+            stop = Stop(arrival.stopPointName, arrival.latitude,
+                        arrival.longitude)
+            stop.putLine(line=busLine)
+            groups[arrival.stopPointName] = stop
+    return list(groups.values())
 
 
 class ArrivalsViewSet(viewsets.ViewSet):
@@ -83,7 +100,6 @@ class ArrivalsViewSet(viewsets.ViewSet):
         longitude = self.request.QUERY_PARAMS.get('longitude', None)
         radius = self.request.QUERY_PARAMS.get('radius', 200)
         output = get_arrivals(latitude, longitude, radius)
-        result = [ArrivalsSerializer(queryset, many=True).data
-                  for queryset in output]
-        return Response(result)
+        serializer = s.StopSerializer(output, many=True)
+        return Response(serializer.data)
 
