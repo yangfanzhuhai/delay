@@ -1,4 +1,5 @@
 from django.db import models
+from datetime import datetime
 
 
 class Neighbours(models.Model):
@@ -40,3 +41,15 @@ class Bus_sequences(models.Model):
     def __str__(self):
         return str(self.__dict__)
 
+
+class Arrival(object):
+    def __init__(self, stopPointName, latitude, longitude,
+                 lineName, estimatedTime):
+        self.stopPointName = stopPointName
+        self.latitude = latitude
+        self.longitude = longitude
+        self.lineName = lineName
+        self.estimatedTime = datetime.fromtimestamp(int(estimatedTime / 1000))
+
+    def __str__(self):
+        return str(self.__dict__)

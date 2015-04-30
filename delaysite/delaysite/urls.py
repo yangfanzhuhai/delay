@@ -7,6 +7,8 @@ from delay import views
 router = routers.DefaultRouter()
 router.register(r'predictions', views.PredictionsViewSet,
                 base_name='predictions')
+router.register(r'arrivals', views.ArrivalsViewSet,
+                base_name='arrivals')
 
 
 urlpatterns = patterns('',
