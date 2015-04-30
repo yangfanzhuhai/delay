@@ -70,7 +70,9 @@ def get_arrivals(latitude, longitude, radius):
         line = line[1:]
         arrival = Arrival(*line)
         output.append(arrival)
-    return output
+        stops = set(map(lambda x: x.stopPointName, output))
+        groups = [[y for y in output if y.stopPointName == x] for x in stops]
+    return groups
 
 
 class ArrivalsViewSet(viewsets.ViewSet):
@@ -80,8 +82,8 @@ class ArrivalsViewSet(viewsets.ViewSet):
         latitude = self.request.QUERY_PARAMS.get('latitude', None)
         longitude = self.request.QUERY_PARAMS.get('longitude', None)
         radius = self.request.QUERY_PARAMS.get('radius', 200)
-        queryset = get_arrivals(latitude, longitude, radius)
-        serializer = ArrivalsSerializer(queryset, many=True)
-        return Response(serializer.data)
-
+        output = get_arrivals(latitude, longitude, radius)
+        result = [ArrivalsSerializer(queryset, many=True).data
+                  for queryset in output]
+        return Response(result)
 
