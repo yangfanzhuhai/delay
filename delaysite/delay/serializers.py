@@ -10,7 +10,9 @@ class PredictionsSerializer(serializers.ModelSerializer):
 
 class BusLineSerializer(serializers.Serializer):
     lineName = serializers.CharField(max_length=64)
-    estimatedTime = serializers.ListField(child=serializers.CharField())
+    estimatedTimeInSeconds = serializers.ListField(
+        child=serializers.IntegerField()
+    )
 
 
 class StopSerializer(serializers.Serializer):
