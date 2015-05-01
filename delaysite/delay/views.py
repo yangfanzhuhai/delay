@@ -76,20 +76,21 @@ def process_countdown_info(r):
 
 def get_arrivals(latitude, longitude, radius):
     r = get_countdown_response(latitude, longitude, radius)
-    lines = process_countdown_info(r)
-    groups = {}
-    for line in lines:
-        arrival = Arrival(*line)
-        busLine = BusLine(lineName=arrival.lineName)
-        busLine.putArrivalTimes(arrival.estimatedTime)
-        if arrival.stopPointName in groups:
-            groups[arrival.stopPointName].putLine(busLine)
-        else:
-            stop = Stop(arrival.stopPointName, arrival.latitude,
-                        arrival.longitude)
-            stop.putLine(line=busLine)
-            groups[arrival.stopPointName] = stop
-    return list(groups.values())
+    if r.status_code == 200:
+        lines = process_countdown_info(r)
+        groups = {}
+        for line in lines:
+            arrival = Arrival(*line)
+            busLine = BusLine(lineName=arrival.lineName)
+            busLine.putArrivalTimes(arrival.estimatedTime)
+            if arrival.stopPointName in groups:
+                groups[arrival.stopPointName].putLine(busLine)
+            else:
+                stop = Stop(arrival.stopPointName, arrival.latitude,
+                            arrival.longitude)
+                stop.putLine(line=busLine)
+                groups[arrival.stopPointName] = stop
+        return list(groups.values())
 
 
 class ArrivalsViewSet(viewsets.ViewSet):
