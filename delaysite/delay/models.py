@@ -49,7 +49,8 @@ class Arrival(object):
         self.latitude = latitude
         self.longitude = longitude
         self.lineName = lineName
-        self.estimatedTime = datetime.fromtimestamp(int(estimatedTime / 1000))
+        diff = datetime.fromtimestamp(int(estimatedTime / 1000)) - datetime.now()
+        self.estimatedTime = diff
 
     def __str__(self):
         return str(self.__dict__)
