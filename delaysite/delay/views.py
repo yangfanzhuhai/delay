@@ -51,8 +51,8 @@ def sequence(request, run_id, route_name, day, hour):
 def get_countdown_response(latitude, longitude, radius):
     url = ('http://countdown.api.tfl.gov.uk/interfaces/ura/'
            'instant_V1?Circle={},{},{}'
-           '&ReturnList=StopPointName,Latitude,'
-           'Longitude,LineName,EstimatedTime#').format(
+           '&ReturnList=StopID,StopCode1,StopPointName,Latitude,'
+           'Longitude,LineName,DirectionID,DestinationName,EstimatedTime#').format(
            latitude, longitude, radius)
     r = requests.get(
         url,
@@ -81,15 +81,20 @@ def get_arrivals(latitude, longitude, radius):
         groups = {}
         for line in lines:
             arrival = Arrival(*line)
-            busLine = BusLine(lineName=arrival.lineName)
+            busLine = BusLine(arrival.lineName,
+                              arrival.stopPointName,
+                              arrival.directionid,
+                              arrival.destination)
             busLine.putArrivalTimes(arrival.estimatedTime)
-            if arrival.stopPointName in groups:
-                groups[arrival.stopPointName].putLine(busLine)
+            if arrival.stopcode1 in groups:
+                groups[arrival.stopcode1].putLine(busLine)
             else:
-                stop = Stop(arrival.stopPointName, arrival.latitude,
+                stop = Stop(arrival.stopid,
+                            arrival.stopcode1,
+                            arrival.latitude,
                             arrival.longitude)
                 stop.putLine(line=busLine)
-                groups[arrival.stopPointName] = stop
+                groups[arrival.stopcode1] = stop
         return list(groups.values())
 
 

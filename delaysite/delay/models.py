@@ -44,12 +44,16 @@ class Bus_sequences(models.Model):
 
 class Arrival(object):
 
-    def __init__(self, stopPointName, latitude, longitude,
-                 lineName, estimatedTime):
+    def __init__(self, stopPointName, stopid, stopcode1, latitude, longitude,
+                 lineName, directionid, destination, estimatedTime):
+        self.stopid = stopid
+        self.stopcode1 = stopcode1
         self.stopPointName = stopPointName
         self.latitude = latitude
         self.longitude = longitude
         self.lineName = lineName
+        self.directionid = directionid
+        self.destination = destination
         diff = datetime.fromtimestamp(int(
                                       estimatedTime / 1000)) - datetime.now()
         self.estimatedTime = diff.days * 86400 + diff.seconds
@@ -59,8 +63,11 @@ class Arrival(object):
 
 
 class BusLine(object):
-    def __init__(self, lineName):
+    def __init__(self, lineName, stopPointName, directionid, destination):
         self.lineName = lineName
+        self.stopPointName = stopPointName
+        self.directionid = directionid
+        self.destination = destination
         self.estimatedTimeInSeconds = []
 
     def putArrivalTimes(self, estimatedTime):
@@ -72,8 +79,9 @@ class BusLine(object):
 
 
 class Stop(object):
-    def __init__(self, stopPointName, latitude, longitude):
-        self.stopPointName = stopPointName
+    def __init__(self, stopid, stopcode1, latitude, longitude):
+        self.stopid = stopid
+        self.stopcode1 = stopcode1
         self.latitude = latitude
         self.longitude = longitude
         self.lines = []
