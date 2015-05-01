@@ -95,6 +95,7 @@ class Stop(object):
                     break
         else:
             self.lines.append(line)
+            self.lines.sort()
 
     def __str__(self):
         return str(self.__dict__)
