@@ -14,9 +14,10 @@ def get_travel_time(bus_sequences, day, hour):
         nxt_stop = nxt.stop_code_lbsl
         timetable_object = Timetable.objects.filter(
             start_stop=current_stop, end_stop=nxt_stop, day=day, hour=hour)
-
-        bus_sequences[current.sequence].average_travel_time = float(
-                     list(timetable_object)[0].average_travel_time)
+        avg = None
+        if timetable_object:
+            avg = float(list(timetable_object)[0].average_travel_time)
+        bus_sequences[current.sequence].average_travel_time = avg
     return bus_sequences
 
 
