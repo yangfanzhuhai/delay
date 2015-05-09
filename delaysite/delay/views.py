@@ -53,8 +53,8 @@ def get_countdown_response(latitude, longitude, radius):
     url = ('http://countdown.api.tfl.gov.uk/interfaces/ura/'
            'instant_V1?Circle={},{},{}'
            '&ReturnList=StopID,StopCode1,StopPointName,Latitude,'
-           'Longitude,LineName,DirectionID,DestinationName,EstimatedTime#').format(
-           latitude, longitude, radius)
+           'Longitude,LineName,DirectionID,DestinationName,'
+           'EstimatedTime#').format(latitude, longitude, radius)
     r = requests.get(
         url,
         auth=('LiveBus95085', 'rU9HUx4ZEm')
