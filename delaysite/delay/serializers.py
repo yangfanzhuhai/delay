@@ -1,11 +1,17 @@
 from rest_framework import serializers
-from delay.models import Bus_sequences
+from delay.models import Bus_sequences, Tfl_timetable
 
 
 class PredictionsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Bus_sequences
+
+
+class TflTimetableSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Tfl_timetable
 
 
 class BusLineSerializer(serializers.Serializer):

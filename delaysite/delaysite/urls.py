@@ -9,6 +9,8 @@ router.register(r'predictions', views.PredictionsViewSet,
                 base_name='predictions')
 router.register(r'arrivals', views.ArrivalsViewSet,
                 base_name='arrivals')
+router.register(r'tfl_timetable', views.TflTimetableViewSet,
+                base_name='tfl_timetable')
 
 
 urlpatterns = patterns('',

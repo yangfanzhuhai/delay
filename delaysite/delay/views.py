@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from delay.models import Bus_sequences, Timetable, Arrival, BusLine, Stop
+from delay.models import Tfl_timetable
 from rest_framework import viewsets
 import delay.serializers as s
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
@@ -37,6 +38,12 @@ class PredictionsViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(run=run)
 
         return get_travel_time(queryset, day, hour)
+
+
+class TflTimetableViewSet(viewsets.ModelViewSet):
+    serializer_class = s.TflTimetableSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+    queryset = Tfl_timetable.objects.all()
 
 
 def sequence(request, run_id, route_name, day, hour):
