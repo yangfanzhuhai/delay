@@ -42,6 +42,17 @@ class Bus_sequences(models.Model):
         return str(self.__dict__)
 
 
+class Tfl_timetable(models.Model):
+    linename = models.CharField(max_length=16, db_index=True)
+    day = models.CharField(max_length=32, db_index=True)
+    run = models.IntegerField()
+    sequence = models.IntegerField()
+    stop_name = models.CharField(max_length=64)
+    departure_time_from_origin = models.CharField(max_length=64)
+    arrival_time = models.CharField(max_length=64)
+    cummulative_travel_time = models.IntegerField()
+
+
 class Arrival(object):
 
     def __init__(self, stopPointName, stopid, stopcode1, latitude, longitude,
