@@ -47,8 +47,9 @@ class Tfl_timetable(models.Model):
     day = models.CharField(max_length=32, db_index=True)
     run = models.IntegerField()
     sequence = models.IntegerField()
+    naptan_atco = models.CharField(max_length=64, default='')
     stop_name = models.CharField(max_length=64)
-    departure_time_from_origin = models.CharField(max_length=64)
+    departure_time_from_origin = models.CharField(max_length=64, default='')
     arrival_time = models.CharField(max_length=64)
     cummulative_travel_time = models.IntegerField()
 

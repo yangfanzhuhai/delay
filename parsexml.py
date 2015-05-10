@@ -48,10 +48,12 @@ def getRunTime(TimingLinkElement, stops):
     toStop, runTime = findChildren(TimingLinkElement, ['To', 'RunTime'])
     fromStopRef = getStopPointRef(fromStop)
     result['from'] = stops[fromStopRef][1][0].text
+    result['fromStopRef'] = fromStopRef
     # result['fromSequence'] = fromStop.get('SequenceNumber')
     # result['runTime'] = runTime.text
     toStopRef = getStopPointRef(toStop)
     result['to'] = stops[toStopRef][1][0].text
+    result['toStopRef'] = toStopRef
     result['toSequence'] = toStop.get('SequenceNumber')
     result['travelTime'] = getTimeInSeconds(runTime.text)
     return result
@@ -87,6 +89,15 @@ def getDefaultDays(tree):
     return getDaysOfWeek(service)
 
 
+def getRunFromJourneyPatternRef(jpRef):
+    split = jpRef.text.split('-')
+    if split[-2] == 'O':
+        return 1
+    elif split[-2] == 'I':
+        return 2
+    return 0
+
+
 def getVehicleJourneys(tree, defaultDays, jpRefToJpsRef):
     vjElements = findChild(tree, 'VehicleJourneys')
     vjs = defaultdict(lambda: defaultdict(dict))
@@ -99,7 +110,8 @@ def getVehicleJourneys(tree, defaultDays, jpRefToJpsRef):
             days = getDaysOfWeek(vj)
         else:
             days = defaultDays
-        run = int(jpRef.text[-1])
+
+        run = getRunFromJourneyPatternRef(jpRef)
         vjs[run][days][departureTime.text] = jpRefToJpsRef[jpRef.text]
     return vjs
 
@@ -113,6 +125,17 @@ def getJourneyPatternIDMap(tree):
     for jp in journeyPatterns:
         m[jp.get('id')] = findChild(jp, 'JourneyPatternSectionRefs').text
     return m
+
+
+def appendOrigin(route):
+    head = route[0].copy()
+    head['to'] = head['from']
+    head['toSequence'] = 1
+    head['arrivalTime'] = head['departure_time']
+    head['cummulativeTravelTime'] = 0
+    head['toStopRef'] = head['fromStopRef']
+    route.insert(0, head)
+    return route
 
 
 def getEntries(lineName, day, run, journeyPatternRef,
@@ -134,6 +157,7 @@ def getEntries(lineName, day, run, journeyPatternRef,
         entry['day'] = day
         entry['run'] = run
         entry['departure_time'] = departureTime
+    route = appendOrigin(route)
     return route
 
 
@@ -141,12 +165,13 @@ def saveToFile(route, lineName):
     filename = 'generated/tfl_timetables/tfl_timetable_{}.csv'.format(lineName)
     with open(filename, 'w') as out:
         writer = csv.writer(out)
-        writer.writerow(['line_name', 'day', 'run', 'sequence', 'stop_name',
-                         'departure_time_from_origin',
+        writer.writerow(['line_name', 'day', 'run', 'sequence', 'naptan_atco',
+                         'stop_name', 'departure_time_from_origin',
                          'arrival_time', 'cummulative_travel_time'])
         for entry in route:
             writer.writerow([entry['line_name'], entry['day'],
                              entry['run'], entry['toSequence'],
+                             entry['toStopRef'],
                              entry['to'], entry['departure_time'],
                              entry['arrivalTime'],
                              entry['cummulativeTravelTime']])
