@@ -198,12 +198,19 @@ def generateArrivalEntries(filename):
     saveToFile(route, lineName)
 
 
-directory = 'data/journey-planner-timetables/one/'
-# for filename in os.listdir(directory):
-#     if filename.endswith(".xml"):
-#         print (filename)
-#         filename = directory + filename
-#         generateArrivalEntries(filename)
+def runForDirectory(directory):
+    for filename in os.listdir(directory):
+        if filename.endswith(".xml"):
+            print (filename)
+            filename = directory + filename
+            generateArrivalEntries(filename)
 
 
-generateArrivalEntries(directory + 'tfl_21-U7_-25184-y05.xml')
+directories = ['data/journey-planner-timetables/one/',
+               'data/journey-planner-timetables/two/']
+# a = map(runForDirectory, directories)
+for dir in directories:
+    runForDirectory(dir)
+
+
+# generateArrivalEntries(directory + 'tfl_21-U7_-25184-y05.xml')
