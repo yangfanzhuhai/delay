@@ -11,6 +11,7 @@ import datetime as dt
 
 
 def get_travel_time(bus_sequences, day, hour, baseSequence):
+    bus_sequences = bus_sequences.order_by('sequence')
     for current, nxt in zip(bus_sequences, bus_sequences[1:]):
         current_stop = current.stop_code_lbsl
         nxt_stop = nxt.stop_code_lbsl
@@ -19,7 +20,7 @@ def get_travel_time(bus_sequences, day, hour, baseSequence):
         avg = None
         if timetable_object.exists():
             avg = float(timetable_object.values()[0]['average_travel_time'])
-        bus_sequences[current.sequence - baseSequence].average_travel_time = avg
+        bus_sequences[current.sequence - baseSequence + 1].average_travel_time = avg
     return bus_sequences
 
 
@@ -105,7 +106,7 @@ class TflTimetableViewSet(viewsets.ModelViewSet):
 
 def sequence(request, run_id, route_name, day, hour):
     bus_sequences = Bus_sequences.objects.filter(route=route_name, run=run_id)
-    bus_sequences = get_travel_time(bus_sequences, day, hour)
+    bus_sequences = get_travel_time(bus_sequences, day, hour, 1)
     context = {'bus_sequences': bus_sequences,
                'day': day,
                'hour': hour}
