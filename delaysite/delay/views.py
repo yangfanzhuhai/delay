@@ -59,19 +59,23 @@ def getTflTimetableEntries(queryset, day, naptan_atco, sequence):
         else:
             queryset = queryset.filter(day='Weekend')
 
+
+    baseSequence = 1
     if sequence is not None:
-        queryset = queryset.filter(sequence__gte=sequence)
+        baseSequence = sequence
     elif naptan_atco is not None:
         currentStop = queryset.filter(naptan_atco=naptan_atco)
         currentSeq = currentStop.values_list('sequence', flat=True)
         if currentSeq:
-            departureTimes = queryset.values_list('departure_time_from_origin',
-                                                  flat=True).distinct()
-            ordered = departureTimes.order_by('departure_time_from_origin')
-            earliestTime = list(ordered)[0]
             baseSequence = currentSeq[0]
-            queryset = queryset.filter(sequence__gte=baseSequence,
-                                       departure_time_from_origin=earliestTime)
+
+    queryset = queryset.filter(sequence__gte=baseSequence)
+    onlyBaseSeq = queryset.filter(sequence=baseSequence)
+    departureTimes = onlyBaseSeq.values_list('departure_time_from_origin',
+                                             flat=True).distinct()
+    ordered = departureTimes.order_by('departure_time_from_origin')
+    earliestTime = list(ordered)[0]
+    queryset = queryset.filter(departure_time_from_origin=earliestTime)
     return queryset
 
 
