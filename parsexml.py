@@ -142,7 +142,7 @@ def getEntries(lineName, day, run, journeyPatternRef,
                departureTime, journeyPatterns, stops):
     route = []
     departureTime = dt.datetime.strptime(departureTime, '%H:%M:%S').time()
-    departureDt = (dt.datetime.combine(dt.date(1, 1, 1), departureTime))
+    departureDt = (dt.datetime.combine(dt.date(2015, 1, 1), departureTime))
 
     jps = journeyPatterns[journeyPatternRef]
     route = [getRunTime(x, stops) for x in jps]
@@ -151,12 +151,11 @@ def getEntries(lineName, day, run, journeyPatternRef,
     for x, entry in enumerate(route):
         entry['cummulativeTravelTime'] = accTravelTimes[x]
         delta = dt.timedelta(seconds=accTravelTimes[x])
-        entry['arrivalTime'] = (departureDt +
-                                delta).time().strftime("%H:%M:%S")
+        entry['arrivalTime'] = departureDt + delta
         entry['line_name'] = lineName
         entry['day'] = day
         entry['run'] = run
-        entry['departure_time'] = departureTime
+        entry['departure_time'] = departureDt
     route = appendOrigin(route)
     return route
 
@@ -208,9 +207,8 @@ def runForDirectory(directory):
 
 directories = ['data/journey-planner-timetables/one/',
                'data/journey-planner-timetables/two/']
-# a = map(runForDirectory, directories)
 for dir in directories:
     runForDirectory(dir)
 
 
-# generateArrivalEntries(directory + 'tfl_21-U7_-25184-y05.xml')
+# generateArrivalEntries('data/journey-planner-timetables/two/tfl_48-74_-40254-y05.xml')

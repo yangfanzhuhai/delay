@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 import requests
 import json
+import datetime as dt
 
 
 def get_travel_time(bus_sequences, day, hour):
@@ -40,10 +41,51 @@ class PredictionsViewSet(viewsets.ModelViewSet):
         return get_travel_time(queryset, day, hour)
 
 
+def getTflTimetableEntries(queryset, day, naptan_atco):
+    if day is not None:
+        dbDays = list(queryset.values_list('day', flat=True).distinct())
+        weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+        if day in dbDays:
+            queryset = queryset.filter(day=day)
+        elif day in weekdays:
+            queryset = queryset.filter(day='MondayToFriday')
+        else:
+            queryset = queryset.filter(day='Weekend')
+    if naptan_atco is not None:
+        currentStop = queryset.filter(naptan_atco=naptan_atco)
+        currentSeq = currentStop.values_list('sequence', flat=True)
+        if currentSeq:
+            departureTimes = queryset.values_list('departure_time_from_origin',
+                                                  flat=True).distinct()
+            ordered = departureTimes.order_by('departure_time_from_origin')
+            earliestTime = list(ordered)[0]
+            baseSequence = currentSeq[0]
+            queryset = queryset.filter(sequence__gte=baseSequence,
+                                       departure_time_from_origin=earliestTime)
+    return queryset
+
+
 class TflTimetableViewSet(viewsets.ModelViewSet):
     serializer_class = s.TflTimetableSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
-    queryset = Tfl_timetable.objects.all()
+
+    def get_queryset(self):
+        queryset = Tfl_timetable.objects.all()
+        route = self.request.QUERY_PARAMS.get('route', None)
+        run = self.request.QUERY_PARAMS.get('run', None)
+        day = self.request.QUERY_PARAMS.get('day', None)
+        hour = self.request.QUERY_PARAMS.get('hour', None)
+        naptan_atco = self.request.QUERY_PARAMS.get('naptan_atco', None)
+        if route is not None:
+            queryset = queryset.filter(linename=route)
+        if run is not None:
+            queryset = queryset.filter(run=run)
+        if hour is not None:
+            currentTime = dt.datetime.strptime(hour, '%H:%M:%S').time()
+            currentDate = dt.datetime.combine(dt.date(2015, 1, 1), currentTime)
+            queryset = queryset.filter(arrival_time__gt=currentDate)
+
+        return getTflTimetableEntries(queryset, day, naptan_atco)
 
 
 def sequence(request, run_id, route_name, day, hour):

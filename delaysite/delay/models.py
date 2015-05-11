@@ -45,12 +45,12 @@ class Bus_sequences(models.Model):
 class Tfl_timetable(models.Model):
     linename = models.CharField(max_length=16, db_index=True)
     day = models.CharField(max_length=32, db_index=True)
-    run = models.IntegerField()
-    sequence = models.IntegerField()
-    naptan_atco = models.CharField(max_length=64, default='')
+    run = models.IntegerField(db_index=True)
+    sequence = models.IntegerField(db_index=True)
+    naptan_atco = models.CharField(max_length=64, default='', db_index=True)
     stop_name = models.CharField(max_length=64)
-    departure_time_from_origin = models.CharField(max_length=64, default='')
-    arrival_time = models.CharField(max_length=64)
+    departure_time_from_origin = models.DateTimeField(db_index=True)
+    arrival_time = models.DateTimeField(db_index=True)
     cummulative_travel_time = models.IntegerField()
 
 
