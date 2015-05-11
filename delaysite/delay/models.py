@@ -23,9 +23,9 @@ class Timetable(models.Model):
 
 
 class Bus_sequences(models.Model):
-    route = models.CharField(max_length=64)
-    run = models.IntegerField()
-    sequence = models.IntegerField()
+    route = models.CharField(max_length=64, db_index=True)
+    run = models.IntegerField(db_index=True)
+    sequence = models.IntegerField(db_index=True)
     stop_code_lbsl = models.CharField(max_length=64)
     bus_stop_code = models.CharField(max_length=64)
     naptan_atco = models.CharField(max_length=64)

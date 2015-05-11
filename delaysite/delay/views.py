@@ -10,17 +10,17 @@ import json
 import datetime as dt
 
 
-def get_travel_time(bus_sequences, day, hour, baseSequence=1):
+def get_travel_time(bus_sequences, day, hour, baseSequence):
     for current, nxt in zip(bus_sequences, bus_sequences[1:]):
         current_stop = current.stop_code_lbsl
         nxt_stop = nxt.stop_code_lbsl
         timetable_object = Timetable.objects.filter(
             start_stop=current_stop, end_stop=nxt_stop, day=day, hour=hour)
         avg = None
-        if timetable_object:
-            avg = float(list(timetable_object)[0].average_travel_time)
-        bus_sequences[current.sequence].average_travel_time = avg
-    return bus_sequences.filter(sequence__gte=baseSequence)
+        if timetable_object.exists():
+            avg = float(timetable_object.values()[0]['average_travel_time'])
+        bus_sequences[current.sequence - baseSequence].average_travel_time = avg
+    return bus_sequences
 
 
 class PredictionsViewSet(viewsets.ModelViewSet):
@@ -38,12 +38,13 @@ class PredictionsViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(route=route)
         if route is not None:
             queryset = queryset.filter(run=run)
+        baseSequence = 1
         if naptan_atco is not None:
             currentStop = queryset.filter(naptan_atco=naptan_atco)
             currentSeq = currentStop.values_list('sequence', flat=True)
             if currentSeq:
                 baseSequence = currentSeq[0]
-
+                queryset = queryset.filter(sequence__gte=baseSequence)
         return get_travel_time(queryset, day, hour, baseSequence)
 
 
