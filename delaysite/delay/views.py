@@ -10,7 +10,7 @@ import json
 import datetime as dt
 
 
-def get_travel_time(bus_sequences, day, hour):
+def get_travel_time(bus_sequences, day, hour, baseSequence=1):
     for current, nxt in zip(bus_sequences, bus_sequences[1:]):
         current_stop = current.stop_code_lbsl
         nxt_stop = nxt.stop_code_lbsl
@@ -20,7 +20,7 @@ def get_travel_time(bus_sequences, day, hour):
         if timetable_object:
             avg = float(list(timetable_object)[0].average_travel_time)
         bus_sequences[current.sequence].average_travel_time = avg
-    return bus_sequences
+    return bus_sequences.filter(sequence__gte=baseSequence)
 
 
 class PredictionsViewSet(viewsets.ModelViewSet):
@@ -33,12 +33,18 @@ class PredictionsViewSet(viewsets.ModelViewSet):
         run = self.request.QUERY_PARAMS.get('run', None)
         day = self.request.QUERY_PARAMS.get('day', None)
         hour = self.request.QUERY_PARAMS.get('hour', None)
+        naptan_atco = self.request.QUERY_PARAMS.get('naptan_atco', None)
         if route is not None:
             queryset = queryset.filter(route=route)
         if route is not None:
             queryset = queryset.filter(run=run)
+        if naptan_atco is not None:
+            currentStop = queryset.filter(naptan_atco=naptan_atco)
+            currentSeq = currentStop.values_list('sequence', flat=True)
+            if currentSeq:
+                baseSequence = currentSeq[0]
 
-        return get_travel_time(queryset, day, hour)
+        return get_travel_time(queryset, day, hour, baseSequence)
 
 
 def getTflTimetableEntries(queryset, day, naptan_atco, sequence):
