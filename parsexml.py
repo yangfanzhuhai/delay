@@ -133,7 +133,7 @@ def appendOrigin(route):
     head['toSequence'] = 1
     head['arrivalTime'] = head['departureTime']
     head['travelTime'] = 0
-    head['cummulativeTravelTime'] = 0
+    head['cumulativeTravelTime'] = 0
     head['toStopRef'] = head['fromStopRef']
     route.insert(0, head)
     return route
@@ -150,7 +150,7 @@ def getEntries(lineName, day, run, journeyPatternRef,
     travelTimes = [x['travelTime'] for x in route]
     accTravelTimes = list(accumulate(travelTimes))
     for x, entry in enumerate(route):
-        entry['cummulativeTravelTime'] = accTravelTimes[x]
+        entry['cumulativeTravelTime'] = accTravelTimes[x]
         delta = dt.timedelta(seconds=accTravelTimes[x])
         entry['arrivalTime'] = departureDt + delta
         entry['route'] = lineName
@@ -168,7 +168,7 @@ def saveToFile(route, lineName):
         writer.writerow(['route', 'day', 'run', 'sequence', 'naptan_atco',
                          'stop_name', 'departure_time_from_origin',
                          'arrival_time', 'travel_time',
-                         'cummulative_travel_time'])
+                         'cumulative_travel_time'])
         for entry in route:
             writer.writerow([entry['route'], entry['day'],
                              entry['run'], entry['toSequence'],
@@ -176,7 +176,7 @@ def saveToFile(route, lineName):
                              entry['to'], entry['departureTime'],
                              entry['arrivalTime'],
                              entry['travelTime'],
-                             entry['cummulativeTravelTime']])
+                             entry['cumulativeTravelTime']])
 
 
 def generateArrivalEntries(filename):

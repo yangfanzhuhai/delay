@@ -12,6 +12,7 @@ import datetime as dt
 
 def get_travel_time(bus_sequences, day, hour, baseSequence):
     bus_sequences = bus_sequences.order_by('sequence')
+    cumulative_travel_time = 0.0
     for current, nxt in zip(bus_sequences, bus_sequences[1:]):
         current_stop = current.stop_code_lbsl
         nxt_stop = nxt.stop_code_lbsl
@@ -21,6 +22,8 @@ def get_travel_time(bus_sequences, day, hour, baseSequence):
         if timetable_object.exists():
             avg = float(timetable_object.values()[0]['average_travel_time'])
         bus_sequences[current.sequence - baseSequence + 1].average_travel_time = avg
+        bus_sequences[current.sequence - baseSequence + 1].cumulative_travel_time = avg + cumulative_travel_time
+        cumulative_travel_time += avg
     return bus_sequences
 
 
@@ -60,7 +63,6 @@ def getTflTimetableEntries(queryset, day, naptan_atco, sequence):
         else:
             queryset = queryset.filter(day='Weekend')
 
-
     baseSequence = 1
     if sequence is not None:
         baseSequence = sequence
@@ -77,6 +79,9 @@ def getTflTimetableEntries(queryset, day, naptan_atco, sequence):
     ordered = departureTimes.order_by('departure_time_from_origin')
     earliestTime = list(ordered)[0]
     queryset = queryset.filter(departure_time_from_origin=earliestTime)
+    baseTravelTime = queryset[0].cumulative_travel_time
+    for entry in queryset:
+        entry.cumulative_travel_time = entry.cumulative_travel_time - baseTravelTime
     return queryset
 
 

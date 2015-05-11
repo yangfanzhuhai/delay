@@ -28,15 +28,17 @@ class Bus_sequences(models.Model):
     sequence = models.IntegerField(db_index=True)
     stop_code_lbsl = models.CharField(max_length=64)
     bus_stop_code = models.CharField(max_length=64)
-    naptan_atco = models.CharField(max_length=64)
+    naptan_atco = models.CharField(max_length=64, db_index=True)
     stop_name = models.CharField(max_length=64)
     location_easting = models.IntegerField()
     location_northing = models.IntegerField()
     heading = models.IntegerField()
     virtual_bus_stop = models.IntegerField()
-    average_travel_time = models.DecimalField(max_digits=11,
-                                              decimal_places=1,
+    average_travel_time = models.DecimalField(max_digits=11, decimal_places=1,
                                               default=0.0)
+    cumulative_travel_time = models.DecimalField(max_digits=11,
+                                                 decimal_places=1,
+                                                 default=0.0)
 
     def __str__(self):
         return str(self.__dict__)
@@ -52,7 +54,7 @@ class Tfl_timetable(models.Model):
     departure_time_from_origin = models.DateTimeField(db_index=True)
     arrival_time = models.DateTimeField(db_index=True)
     travel_time = models.IntegerField()
-    cummulative_travel_time = models.IntegerField()
+    cumulative_travel_time = models.IntegerField()
 
 
 class Arrival(object):
