@@ -41,7 +41,7 @@ class PredictionsViewSet(viewsets.ModelViewSet):
         return get_travel_time(queryset, day, hour)
 
 
-def getTflTimetableEntries(queryset, day, naptan_atco):
+def getTflTimetableEntries(queryset, day, naptan_atco, sequence):
     if day is not None:
         dbDays = list(queryset.values_list('day', flat=True).distinct())
         weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
@@ -51,7 +51,10 @@ def getTflTimetableEntries(queryset, day, naptan_atco):
             queryset = queryset.filter(day='MondayToFriday')
         else:
             queryset = queryset.filter(day='Weekend')
-    if naptan_atco is not None:
+
+    if sequence is not None:
+        queryset = queryset.filter(sequence__gte=sequence)
+    elif naptan_atco is not None:
         currentStop = queryset.filter(naptan_atco=naptan_atco)
         currentSeq = currentStop.values_list('sequence', flat=True)
         if currentSeq:
@@ -76,6 +79,7 @@ class TflTimetableViewSet(viewsets.ModelViewSet):
         day = self.request.QUERY_PARAMS.get('day', None)
         hour = self.request.QUERY_PARAMS.get('hour', None)
         naptan_atco = self.request.QUERY_PARAMS.get('naptan_atco', None)
+        sequence = self.request.QUERY_PARAMS.get('sequence', None)
         if route is not None:
             queryset = queryset.filter(linename=route)
         if run is not None:
@@ -85,7 +89,7 @@ class TflTimetableViewSet(viewsets.ModelViewSet):
             currentDate = dt.datetime.combine(dt.date(2015, 1, 1), currentTime)
             queryset = queryset.filter(arrival_time__gt=currentDate)
 
-        return getTflTimetableEntries(queryset, day, naptan_atco)
+        return getTflTimetableEntries(queryset, day, naptan_atco, sequence)
 
 
 def sequence(request, run_id, route_name, day, hour):
