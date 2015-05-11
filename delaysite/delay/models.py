@@ -43,7 +43,7 @@ class Bus_sequences(models.Model):
 
 
 class Tfl_timetable(models.Model):
-    linename = models.CharField(max_length=16, db_index=True)
+    route = models.CharField(max_length=16, db_index=True)
     day = models.CharField(max_length=32, db_index=True)
     run = models.IntegerField(db_index=True)
     sequence = models.IntegerField(db_index=True)

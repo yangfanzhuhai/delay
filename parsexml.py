@@ -131,7 +131,8 @@ def appendOrigin(route):
     head = route[0].copy()
     head['to'] = head['from']
     head['toSequence'] = 1
-    head['arrivalTime'] = head['departure_time']
+    head['arrivalTime'] = head['departureTime']
+    head['travelTime'] = 0
     head['cummulativeTravelTime'] = 0
     head['toStopRef'] = head['fromStopRef']
     route.insert(0, head)
@@ -152,10 +153,10 @@ def getEntries(lineName, day, run, journeyPatternRef,
         entry['cummulativeTravelTime'] = accTravelTimes[x]
         delta = dt.timedelta(seconds=accTravelTimes[x])
         entry['arrivalTime'] = departureDt + delta
-        entry['line_name'] = lineName
+        entry['route'] = lineName
         entry['day'] = day
         entry['run'] = run
-        entry['departure_time'] = departureDt
+        entry['departureTime'] = departureDt
     route = appendOrigin(route)
     return route
 
@@ -164,15 +165,17 @@ def saveToFile(route, lineName):
     filename = 'generated/tfl_timetables/tfl_timetable_{}.csv'.format(lineName)
     with open(filename, 'w') as out:
         writer = csv.writer(out)
-        writer.writerow(['line_name', 'day', 'run', 'sequence', 'naptan_atco',
+        writer.writerow(['route', 'day', 'run', 'sequence', 'naptan_atco',
                          'stop_name', 'departure_time_from_origin',
-                         'arrival_time', 'cummulative_travel_time'])
+                         'arrival_time', 'travel_time',
+                         'cummulative_travel_time'])
         for entry in route:
-            writer.writerow([entry['line_name'], entry['day'],
+            writer.writerow([entry['route'], entry['day'],
                              entry['run'], entry['toSequence'],
                              entry['toStopRef'],
-                             entry['to'], entry['departure_time'],
+                             entry['to'], entry['departureTime'],
                              entry['arrivalTime'],
+                             entry['travelTime'],
                              entry['cummulativeTravelTime']])
 
 
