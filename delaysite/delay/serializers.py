@@ -15,9 +15,9 @@ class TflTimetableSerializer(serializers.ModelSerializer):
 
 
 class BusLineSerializer(serializers.Serializer):
-    lineName = serializers.CharField(max_length=64)
-    stopPointName = serializers.CharField(max_length=64)
-    directionid = serializers.IntegerField()
+    route = serializers.CharField(max_length=64)
+    stop_name = serializers.CharField(max_length=64)
+    run = serializers.IntegerField()
     destination = serializers.CharField(max_length=64)
     estimatedTimeInSeconds = serializers.ListField(
         child=serializers.IntegerField()
@@ -25,8 +25,9 @@ class BusLineSerializer(serializers.Serializer):
 
 
 class StopSerializer(serializers.Serializer):
-    stopid = serializers.CharField(max_length=16)
-    stopcode1 = serializers.CharField(max_length=16)
+    stop_code_lbsl = serializers.CharField(max_length=16)
+    sms_code = serializers.CharField(max_length=16)
+    naptan_atco = serializers.CharField(max_length=64)
     latitude = serializers.DecimalField(max_digits=11, decimal_places=6)
     longitude = serializers.DecimalField(max_digits=11, decimal_places=6)
     lines = BusLineSerializer(many=True)

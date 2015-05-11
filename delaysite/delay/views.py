@@ -81,7 +81,7 @@ class TflTimetableViewSet(viewsets.ModelViewSet):
         naptan_atco = self.request.QUERY_PARAMS.get('naptan_atco', None)
         sequence = self.request.QUERY_PARAMS.get('sequence', None)
         if route is not None:
-            queryset = queryset.filter(linename=route)
+            queryset = queryset.filter(route=route)
         if run is not None:
             queryset = queryset.filter(run=run)
         if hour is not None:
@@ -105,7 +105,7 @@ def sequence(request, run_id, route_name, day, hour):
 def get_countdown_response(latitude, longitude, radius):
     url = ('http://countdown.api.tfl.gov.uk/interfaces/ura/'
            'instant_V1?Circle={},{},{}'
-           '&ReturnList=StopID,StopCode1,StopPointName,Latitude,'
+           '&ReturnList=StopID,StopCode1,StopCode2,StopPointName,Latitude,'
            'Longitude,LineName,DirectionID,DestinationName,'
            'EstimatedTime#').format(latitude, longitude, radius)
     r = requests.get(
@@ -135,20 +135,21 @@ def get_arrivals(latitude, longitude, radius):
         groups = {}
         for line in lines:
             arrival = Arrival(*line)
-            busLine = BusLine(arrival.lineName,
-                              arrival.stopPointName,
-                              arrival.directionid,
+            busLine = BusLine(arrival.route,
+                              arrival.stop_name,
+                              arrival.run,
                               arrival.destination)
             busLine.putArrivalTimes(arrival.estimatedTime)
-            if arrival.stopcode1 in groups:
-                groups[arrival.stopcode1].putLine(busLine)
+            if arrival.sms_code in groups:
+                groups[arrival.sms_code].putLine(busLine)
             else:
-                stop = Stop(arrival.stopid,
-                            arrival.stopcode1,
+                stop = Stop(arrival.stop_code_lbsl,
+                            arrival.sms_code,
+                            arrival.naptan_atco,
                             arrival.latitude,
                             arrival.longitude)
                 stop.putLine(line=busLine)
-                groups[arrival.stopcode1] = stop
+                groups[arrival.sms_code] = stop
         return list(groups.values())
 
 

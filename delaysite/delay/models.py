@@ -51,20 +51,22 @@ class Tfl_timetable(models.Model):
     stop_name = models.CharField(max_length=64)
     departure_time_from_origin = models.DateTimeField(db_index=True)
     arrival_time = models.DateTimeField(db_index=True)
+    travel_time = models.IntegerField()
     cummulative_travel_time = models.IntegerField()
 
 
 class Arrival(object):
 
-    def __init__(self, stopPointName, stopid, stopcode1, latitude, longitude,
-                 lineName, directionid, destination, estimatedTime):
-        self.stopid = stopid
-        self.stopcode1 = stopcode1
-        self.stopPointName = stopPointName
+    def __init__(self, stop_name, stop_code_lbsl, sms_code, naptan_atco,
+                 latitude, longitude, route, run, destination, estimatedTime):
+        self.stop_code_lbsl = stop_code_lbsl
+        self.sms_code = sms_code
+        self.naptan_atco = naptan_atco
+        self.stop_name = stop_name
         self.latitude = latitude
         self.longitude = longitude
-        self.lineName = lineName
-        self.directionid = directionid
+        self.route = route
+        self.run = run
         self.destination = destination
         diff = datetime.fromtimestamp(int(
                                       estimatedTime / 1000)) - datetime.now()
@@ -75,10 +77,10 @@ class Arrival(object):
 
 
 class BusLine(object):
-    def __init__(self, lineName, stopPointName, directionid, destination):
-        self.lineName = lineName
-        self.stopPointName = stopPointName
-        self.directionid = directionid
+    def __init__(self, route, stop_name, run, destination):
+        self.route = route
+        self.stop_name = stop_name
+        self.run = run
         self.destination = destination
         self.estimatedTimeInSeconds = []
 
@@ -91,18 +93,20 @@ class BusLine(object):
 
 
 class Stop(object):
-    def __init__(self, stopid, stopcode1, latitude, longitude):
-        self.stopid = stopid
-        self.stopcode1 = stopcode1
+    def __init__(self, stop_code_lbsl, sms_code, naptan_atco,
+                 latitude, longitude):
+        self.stop_code_lbsl = stop_code_lbsl
+        self.sms_code = sms_code
+        self.naptan_atco = naptan_atco
         self.latitude = latitude
         self.longitude = longitude
         self.lines = []
 
     def putLine(self, line):
-        existingLines = map(lambda x: x.lineName, self.lines)
-        if line.lineName in existingLines:
+        existingLines = map(lambda x: x.route, self.lines)
+        if line.route in existingLines:
             for l in self.lines:
-                if l.lineName == line.lineName:
+                if l.route == line.route:
                     l.putArrivalTimes(line.estimatedTimeInSeconds[0])
                     break
         else:
