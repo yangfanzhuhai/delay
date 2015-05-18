@@ -113,7 +113,7 @@ class Stop(object):
                     break
         else:
             self.lines.append(line)
-            self.lines.sort()
+            self.lines.sort(key=lambda line: line.route)
 
     def __str__(self):
         return str(self.__dict__)

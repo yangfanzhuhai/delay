@@ -18,7 +18,7 @@ def get_travel_time(bus_sequences, day, hour, baseSequence):
         nxt_stop = nxt.stop_code_lbsl
         timetable_object = Timetable.objects.filter(
             start_stop=current_stop, end_stop=nxt_stop, day=day, hour=hour)
-        avg = None
+        avg = 0.0
         if timetable_object.exists():
             avg = float(timetable_object.values()[0]['average_travel_time'])
         bus_sequences[current.sequence - baseSequence + 1].average_travel_time = avg
@@ -77,9 +77,10 @@ def getTflTimetableEntries(queryset, day, naptan_atco, sequence):
     departureTimes = onlyBaseSeq.values_list('departure_time_from_origin',
                                              flat=True).distinct()
     ordered = departureTimes.order_by('departure_time_from_origin')
-    earliestTime = list(ordered)[0]
-    queryset = queryset.filter(departure_time_from_origin=earliestTime)
-    baseTravelTime = queryset[0].cumulative_travel_time
+    if ordered:
+        earliestTime = list(ordered)[0]
+        queryset = queryset.filter(departure_time_from_origin=earliestTime)
+        baseTravelTime = queryset[0].cumulative_travel_time
     for entry in queryset:
         entry.cumulative_travel_time = entry.cumulative_travel_time - baseTravelTime
     return queryset
@@ -147,6 +148,8 @@ def process_countdown_info(r):
 
 def get_arrivals(latitude, longitude, radius):
     r = get_countdown_response(latitude, longitude, radius)
+    existingLines = set()
+
     if r.status_code == 200:
         lines = process_countdown_info(r)
         groups = {}
@@ -157,16 +160,18 @@ def get_arrivals(latitude, longitude, radius):
                               arrival.run,
                               arrival.destination)
             busLine.putArrivalTimes(arrival.estimatedTime)
-            if arrival.sms_code in groups:
-                groups[arrival.sms_code].putLine(busLine)
-            else:
-                stop = Stop(arrival.stop_code_lbsl,
-                            arrival.sms_code,
-                            arrival.naptan_atco,
-                            arrival.latitude,
-                            arrival.longitude)
-                stop.putLine(line=busLine)
-                groups[arrival.sms_code] = stop
+            if (arrival.route, arrival.destination) not in existingLines:
+                existingLines.add((arrival.route, arrival.destination))
+                if arrival.sms_code in groups:
+                    groups[arrival.sms_code].putLine(busLine)
+                else:
+                    stop = Stop(arrival.stop_code_lbsl,
+                                arrival.sms_code,
+                                arrival.naptan_atco,
+                                arrival.latitude,
+                                arrival.longitude)
+                    stop.putLine(line=busLine)
+                    groups[arrival.sms_code] = stop
         return list(groups.values())
 
 
