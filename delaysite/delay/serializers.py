@@ -28,6 +28,6 @@ class StopSerializer(serializers.Serializer):
     stop_code_lbsl = serializers.CharField(max_length=16)
     sms_code = serializers.CharField(max_length=16)
     naptan_atco = serializers.CharField(max_length=64)
-    latitude = serializers.DecimalField(max_digits=11, decimal_places=6)
-    longitude = serializers.DecimalField(max_digits=11, decimal_places=6)
+    latitude = serializers.DecimalField(max_digits=32, decimal_places=10)
+    longitude = serializers.DecimalField(max_digits=32, decimal_places=10)
     lines = BusLineSerializer(many=True)
