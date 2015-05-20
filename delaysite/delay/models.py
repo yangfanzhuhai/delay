@@ -39,6 +39,22 @@ class Bus_sequences(models.Model):
     cumulative_travel_time = models.DecimalField(max_digits=11,
                                                  decimal_places=1,
                                                  default=0.0)
+    curr_average_travel_time = models.DecimalField(max_digits=11,
+                                                   decimal_places=1,
+                                                   default=0.0)
+    curr_cumulative_travel_time = models.DecimalField(max_digits=11,
+                                                      decimal_places=1,
+                                                      default=0.0)
+
+    def __str__(self):
+        return str(self.__dict__)
+
+
+class Current_timetable(models.Model):
+    start_stop = models.CharField(max_length=64, db_index=True)
+    end_stop = models.CharField(max_length=64, db_index=True)
+    average_travel_time = models.DecimalField(max_digits=11, decimal_places=1,
+                                              default=0.0)
 
     def __str__(self):
         return str(self.__dict__)

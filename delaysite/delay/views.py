@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from delay.models import Bus_sequences, Timetable, Arrival, BusLine, Stop
-from delay.models import Tfl_timetable
+from delay.models import Tfl_timetable, Current_timetable
 from rest_framework import viewsets
 import delay.serializers as s
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
@@ -13,9 +13,11 @@ import datetime as dt
 def get_travel_time(bus_sequences, day, hour, baseSequence):
     bus_sequences = bus_sequences.order_by('sequence')
     cumulative_travel_time = 0.0
+    curr_cumu = 0.0
     for current, nxt in zip(bus_sequences, bus_sequences[1:]):
         current_stop = current.stop_code_lbsl
         nxt_stop = nxt.stop_code_lbsl
+
         timetable_object = Timetable.objects.filter(
             start_stop=current_stop, end_stop=nxt_stop, day=day, hour=hour)
         avg = 0.0
@@ -24,6 +26,19 @@ def get_travel_time(bus_sequences, day, hour, baseSequence):
         bus_sequences[current.sequence - baseSequence + 1].average_travel_time = avg
         bus_sequences[current.sequence - baseSequence + 1].cumulative_travel_time = avg + cumulative_travel_time
         cumulative_travel_time += avg
+
+        curr_avg = 0.0
+        current_timetable_object = Current_timetable.objects.filter(
+               start_stop=current_stop, end_stop=nxt_stop)
+        if current_timetable_object.exists():
+            curr_avg = float(current_timetable_object.values()[0]
+                             ['average_travel_time'])
+        bus_sequences[current.sequence -
+                      baseSequence + 1].curr_average_travel_time = curr_avg
+        bus_sequences[current.sequence -
+                      baseSequence + 1].curr_cumulative_travel_time = curr_avg + curr_cumu
+        curr_cumu += curr_avg
+
     return bus_sequences
 
 
