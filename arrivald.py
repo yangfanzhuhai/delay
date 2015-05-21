@@ -34,23 +34,23 @@ cur = conn.cursor()
 
 sql_insert_full = ("INSERT INTO delay_arrivals_full "
                    "(stop_code_lbsl, route, run, vehicle_id, trip_id, "
-                   "arrival_time, expire_time, arrival_date) "
-                   "VALUES (%s, %s, %s, %s, %s, %s, %s, DATE(%s)) ")
+                   "arrival_time, expire_time, arrival_date, recorded_time) "
+                   "VALUES (%s, %s, %s, %s, %s, %s, %s, DATE(%s), %s) ")
 
 sql_insert = ("INSERT INTO delay_arrivals "
               "(stop_code_lbsl, route, run, vehicle_id, trip_id, "
-              "arrival_time, expire_time, arrival_date) "
-              "VALUES (%s, %s, %s, %s, %s, %s, %s, DATE(%s)) ")
+              "arrival_time, expire_time, arrival_date, recorded_time) "
+              "VALUES (%s, %s, %s, %s, %s, %s, %s, DATE(%s), %s) ")
 
 sql_update = ("UPDATE delay_arrivals "
-              "SET arrival_time = %s, expire_time = %s "
+              "SET arrival_time = %s, expire_time = %s, recorded_time = %s"
               "WHERE id = %s")
 
 sql = ("SELECT id FROM delay_arrivals "
        "WHERE stop_code_lbsl = %s "
        "AND route = %s AND run = %s AND vehicle_id = %s "
        "AND trip_id = %s "
-       "AND TIMESTAMPDIFF(MINUTE, recorded_time, now()) < 10 ")
+       "AND TIMESTAMPDIFF(MINUTE, recorded_time, now()) < 60 ")
 
 for line in r.iter_lines():
     if not line:
@@ -67,6 +67,7 @@ for line in r.iter_lines():
     else:
         line[6] = datetime.fromtimestamp(line[6])
     line.append(line[5])
+    line.append(datetime.now())
     print(line[0:5], line[5].strftime("%H:%M:%S"), line[6])
     cur.execute(sql_insert_full, line)
     cur.execute(sql, line[0:5])
@@ -75,7 +76,7 @@ for line in r.iter_lines():
         cur.execute(sql_insert, line)
     else:
         print(re)
-        lineupdate = line[5:7]
+        lineupdate = line[5:8]
         # lineupdate.extend(line[0:5])
         lineupdate.extend(re)
         # print (lineupdate)
