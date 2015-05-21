@@ -55,6 +55,9 @@ class Current_timetable(models.Model):
     end_stop = models.CharField(max_length=64, db_index=True)
     average_travel_time = models.DecimalField(max_digits=11, decimal_places=1,
                                               default=0.0)
+    day = models.CharField(max_length=9, db_index=True)
+    hour = models.IntegerField(db_index=True)
+    date = models.DateField()
 
     def __str__(self):
         return str(self.__dict__)
