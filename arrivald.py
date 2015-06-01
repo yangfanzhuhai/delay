@@ -3,83 +3,117 @@ from requests.auth import HTTPDigestAuth
 import json
 import pymysql
 import sys
-from datetime import datetime
+import datetime
+import time
+import pickle
+import os.path
 
-# url = ('http://countdown.api.tfl.gov.uk/interfaces/ura/instant_V1'
-url = ('http://countdown.api.tfl.gov.uk/interfaces/ura/stream_V1?ReturnList=StopID,LineName,DirectionID,VehicleID,TripID,EstimatedTime,ExpireTime')
+tic = time.clock()
 
-r = requests.get(
-    url,
-    auth=HTTPDigestAuth('LiveBus95085', 'rU9HUx4ZEm'),
-    # auth=('LiveBus95085', 'rU9HUx4ZEm'),
-    stream=True,
-)
-print("Status Code:", r.status_code)
 
-if r.status_code != requests.codes.ok:
-    print("Received a bad status code from the server -- aborting")
-    print(r.text)
-    sys.exit()
+def connect_to_countdown():
+    # url = ('http://countdown.api.tfl.gov.uk/interfaces/ura/instant_V1'
+    # 'http://countdown.api.tfl.gov.uk/interfaces/ura/instant_V1?ReturnList=StopID,LineName,DirectionID,VehicleID,TripID,EstimatedTime,ExpireTime'
+    url = ("http://countdown.api.tfl.gov.uk/interfaces/ura/instant_V1?"
+           "ReturnList=StopID,LineName,DirectionID,VehicleID,TripID,"
+           "EstimatedTime,ExpireTime")
 
-conn = pymysql.connect(
-    host='localhost',
-    port=3306,
-    user='delay',
-    passwd='CcwLCw3Kcs9Py33T',
-    # user='root',
-    # passwd='dta255dta',
-    db='delay',
-)
-cur = conn.cursor()
+    r = requests.get(
+        url,
+        # auth=HTTPDigestAuth('LiveBus95085', 'rU9HUx4ZEm'),
+        auth=('LiveBus95085', 'rU9HUx4ZEm'),
+        # stream=True,
+    )
+    print("Status Code:", r.status_code)
 
-sql_insert_full = ("INSERT INTO delay_arrivals_full "
-                   "(stop_code_lbsl, route, run, vehicle_id, trip_id, "
-                   "arrival_time, expire_time, arrival_date, recorded_time) "
-                   "VALUES (%s, %s, %s, %s, %s, %s, %s, DATE(%s), %s) ")
+    if r.status_code != requests.codes.ok:
+        print("Received a bad status code from the server -- aborting")
+        print(r.text)
+        sys.exit()
+    return r
 
-sql_insert = ("INSERT INTO delay_arrivals "
-              "(stop_code_lbsl, route, run, vehicle_id, trip_id, "
-              "arrival_time, expire_time, arrival_date, recorded_time) "
-              "VALUES (%s, %s, %s, %s, %s, %s, %s, DATE(%s), %s) ")
 
-sql_update = ("UPDATE delay_arrivals "
-              "SET arrival_time = %s, expire_time = %s, recorded_time = %s"
-              "WHERE id = %s")
-
-sql = ("SELECT id FROM delay_arrivals "
-       "WHERE stop_code_lbsl = %s "
-       "AND route = %s AND run = %s AND vehicle_id = %s "
-       "AND trip_id = %s "
-       "AND TIMESTAMPDIFF(MINUTE, recorded_time, now()) < 60 ")
-
-for line in r.iter_lines():
-    if not line:
-        continue
-    line = json.loads(line.decode('utf-8-sig'))
-    if line[0] != 1:
-        continue
-    line = line[1:]
-    for i in [5, 6]:
-        line[i] = int(line[i] / 1000)
-    line[5] = datetime.fromtimestamp(line[5])
-    if line[6] == 0:
-        line[6] = None
+def load_current_arrivals():
+    if os.path.isfile("arrival.p"):
+        return pickle.load(open("arrival.p", "rb"))
     else:
-        line[6] = datetime.fromtimestamp(line[6])
-    line.append(line[5])
-    line.append(datetime.now())
-    print(line[0:5], line[5].strftime("%H:%M:%S"), line[6])
-    cur.execute(sql_insert_full, line)
-    cur.execute(sql, line[0:5])
-    re = cur.fetchone()
-    if re is None:
+        return {}
+
+
+def getTime(l):
+    return datetime.datetime.fromtimestamp(int(l / 1000))
+
+
+def update_current(r, arrival):
+    for line in r.iter_lines():
+        if not line:
+            continue
+        line = json.loads(line.decode('utf-8-sig'))
+        if line[0] != 1:
+            continue
+        line = line[1:]
+        line[5] = getTime(line[5])
+        if line[6] == 0:
+            line[6] = None
+            print("has none")
+        else:
+            line[6] = getTime(line[6])
+        line.append(line[5])
+        line.append(datetime.datetime.now())
+        arrival[tuple(line[0:5])] = line
+    return arrival
+
+
+def connect_to_db():
+    conn = pymysql.connect(
+        host='localhost',
+        # host='delay.doc.ic.ac.uk',
+        port=3306,
+        user='delay',
+        passwd='CcwLCw3Kcs9Py33T',
+        # user='root',
+        # passwd='dta255dta',
+        db='delay')
+    return conn
+
+
+def insert_arrivals_to_db(conn, arrival):
+    sql_insert = ("INSERT INTO delay_arrivals "
+                  "(stop_code_lbsl, route, run, vehicle_id, trip_id, "
+                  "arrival_time, expire_time, arrival_date, recorded_time) "
+                  "VALUES (%s, %s, %s, %s, %s, %s, %s, DATE(%s), %s) ")
+    print(len(arrival))
+    expired = [v for v in arrival.values()
+               if (v[6] is None or
+                   (v[6] + datetime.timedelta(minutes=15)
+                    <= datetime.datetime.now()))]
+
+    print("filtered expired")
+    print(len(expired))
+    arrival = dict((k, v) for k, v in arrival.items()
+                   if (v[6] is not None and
+                       (v[6] + datetime.timedelta(minutes=15)
+                        > datetime.datetime.now())
+                       )
+                   )
+    print("filtered arrival")
+    for line in expired:
+        # print(line[0:5], line[5].strftime("%H:%M:%S"), line[6])
         cur.execute(sql_insert, line)
-    else:
-        print(re)
-        lineupdate = line[5:8]
-        # lineupdate.extend(line[0:5])
-        lineupdate.extend(re)
-        # print (lineupdate)
-        cur.execute(sql_update, lineupdate)
-    conn.commit()
+    return arrival
+
+r = connect_to_countdown()
+arrival = load_current_arrivals()
+print("loaded current")
+arrival = update_current(r, arrival)
+print("updated current")
+conn = connect_to_db()
+print("connected to db")
+cur = conn.cursor()
+arrival = insert_arrivals_to_db(conn, arrival)
+conn.commit()
 conn.close()
+pickle.dump(arrival, open("arrival.p", "wb"))
+toc = time.clock()
+
+print(toc - tic)

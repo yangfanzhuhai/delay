@@ -36,7 +36,8 @@ def get_travel_time(bus_sequences, day, hour, baseSequence):
         bus_sequences[current.sequence -
                       baseSequence + 1].curr_average_travel_time = curr_avg
         bus_sequences[current.sequence -
-                      baseSequence + 1].curr_cumulative_travel_time = curr_avg + curr_cumu
+                      baseSequence + 1].curr_
+                      cumulative_travel_time = curr_avg + curr_cumu
         curr_cumu += curr_avg
 
     return bus_sequences
