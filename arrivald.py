@@ -7,8 +7,7 @@ import datetime
 import time
 import pickle
 import os.path
-
-tic = time.clock()
+import threading
 
 
 def connect_to_countdown():
@@ -78,6 +77,7 @@ def connect_to_db():
 
 
 def insert_arrivals_to_db(conn, arrival):
+    cur = conn.cursor()
     sql_insert = ("INSERT INTO delay_arrivals "
                   "(stop_code_lbsl, route, run, vehicle_id, trip_id, "
                   "arrival_time, expire_time, arrival_date, recorded_time) "
@@ -102,18 +102,23 @@ def insert_arrivals_to_db(conn, arrival):
         cur.execute(sql_insert, line)
     return arrival
 
-r = connect_to_countdown()
-arrival = load_current_arrivals()
-print("loaded current")
-arrival = update_current(r, arrival)
-print("updated current")
-conn = connect_to_db()
-print("connected to db")
-cur = conn.cursor()
-arrival = insert_arrivals_to_db(conn, arrival)
-conn.commit()
-conn.close()
-pickle.dump(arrival, open("arrival.p", "wb"))
-toc = time.clock()
 
-print(toc - tic)
+def f():
+    tic = time.clock()
+    r = connect_to_countdown()
+    arrival = load_current_arrivals()
+    print("loaded current")
+    arrival = update_current(r, arrival)
+    print("updated current")
+    conn = connect_to_db()
+    print("connected to db")
+    arrival = insert_arrivals_to_db(conn, arrival)
+    conn.commit()
+    conn.close()
+    pickle.dump(arrival, open("arrival.p", "wb"))
+    toc = time.clock()
+    print(toc - tic)
+    threading.Timer(15, f).start()
+
+# start calling f now and every 60 sec thereafter
+f()
