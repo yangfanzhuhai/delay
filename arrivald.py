@@ -58,7 +58,6 @@ def update_current(r, arrival):
         else:
             line[6] = getTime(line[6])
         line.append(line[5])
-        line.append(datetime.datetime.now())
         arrival[tuple(line[0:5])] = line
     return arrival
 
@@ -80,8 +79,8 @@ def insert_arrivals_to_db(conn, arrival):
     cur = conn.cursor()
     sql_insert = ("INSERT INTO delay_arrivals "
                   "(stop_code_lbsl, route, run, vehicle_id, trip_id, "
-                  "arrival_time, expire_time, arrival_date, recorded_time) "
-                  "VALUES (%s, %s, %s, %s, %s, %s, %s, DATE(%s), %s) ")
+                  "arrival_time, expire_time, arrival_date) "
+                  "VALUES (%s, %s, %s, %s, %s, %s, %s, DATE(%s)) ")
     print(len(arrival))
     expired = [v for v in arrival.values()
                if (v[6] is None or
@@ -99,7 +98,8 @@ def insert_arrivals_to_db(conn, arrival):
     print("filtered arrival")
     for line in expired:
         # print(line[0:5], line[5].strftime("%H:%M:%S"), line[6])
-        cur.execute(sql_insert, line)
+        # print(line)
+        cur.execute(sql_insert, line[0:8])
     return arrival
 
 
