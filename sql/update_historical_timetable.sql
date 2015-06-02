@@ -1,3 +1,6 @@
+USE delay;
+
+
 TRUNCATE delay_timetable_updated;
 
 INSERT INTO delay_timetable_updated (start_stop, end_stop, day, hour, average_travel_time)
