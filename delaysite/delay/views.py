@@ -74,7 +74,10 @@ def getTflTimetableEntries(queryset, day, naptan_atco, sequence):
         if day in dbDays:
             queryset = queryset.filter(day=day)
         elif day in weekdays:
-            queryset = queryset.filter(day='MondayToFriday')
+            if 'MondayToFriday' in dbDays:
+                queryset = queryset.filter(day='MondayToFriday')
+            else:
+                queryset = queryset.filter(day='Monday')
         else:
             queryset = queryset.filter(day='Weekend')
 
