@@ -52,7 +52,7 @@ def update_current(r, arrival):
             continue
         line = line[1:]
         line[5] = getTime(line[5])
-        if line[6] == 0:
+        if int(line[6]/1000) == 0:
             line[6] = None
             print("has none")
         else:

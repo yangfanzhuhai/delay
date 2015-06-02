@@ -70,10 +70,11 @@ class Tfl_timetable(models.Model):
     sequence = models.IntegerField(db_index=True)
     naptan_atco = models.CharField(max_length=64, default='', db_index=True)
     stop_name = models.CharField(max_length=64)
-    departure_time_from_origin = models.DateTimeField(db_index=True)
-    arrival_time = models.DateTimeField(db_index=True)
-    travel_time = models.IntegerField()
+    # departure_time_from_origin = models.DateTimeField(db_index=True)
+    # arrival_time = models.DateTimeField(db_index=True)
+    average_travel_time = models.IntegerField()
     cumulative_travel_time = models.IntegerField()
+    arrival_hour = models.IntegerField(db_index=True)
 
 
 class Arrival(object):

@@ -36,8 +36,7 @@ def get_travel_time(bus_sequences, day, hour, baseSequence):
         bus_sequences[current.sequence -
                       baseSequence + 1].curr_average_travel_time = curr_avg
         bus_sequences[current.sequence -
-                      baseSequence + 1].curr_
-                      cumulative_travel_time = curr_avg + curr_cumu
+                      baseSequence + 1].curr_cumulative_travel_time = curr_avg + curr_cumu
         curr_cumu += curr_avg
 
     return bus_sequences
@@ -88,15 +87,8 @@ def getTflTimetableEntries(queryset, day, naptan_atco, sequence):
         if currentSeq:
             baseSequence = currentSeq[0]
 
-    queryset = queryset.filter(sequence__gte=baseSequence)
-    onlyBaseSeq = queryset.filter(sequence=baseSequence)
-    departureTimes = onlyBaseSeq.values_list('departure_time_from_origin',
-                                             flat=True).distinct()
-    ordered = departureTimes.order_by('departure_time_from_origin')
-    if ordered:
-        earliestTime = list(ordered)[0]
-        queryset = queryset.filter(departure_time_from_origin=earliestTime)
-        baseTravelTime = queryset[0].cumulative_travel_time
+    queryset = queryset.filter(sequence__gte=baseSequence).order_by('sequence')
+    baseTravelTime = queryset[0].cumulative_travel_time
     for entry in queryset:
         entry.cumulative_travel_time = entry.cumulative_travel_time - baseTravelTime
     return queryset
@@ -119,9 +111,7 @@ class TflTimetableViewSet(viewsets.ModelViewSet):
         if run is not None:
             queryset = queryset.filter(run=run)
         if hour is not None:
-            currentTime = dt.datetime.strptime(hour, '%H:%M:%S').time()
-            currentDate = dt.datetime.combine(dt.date(2015, 1, 1), currentTime)
-            queryset = queryset.filter(arrival_time__gt=currentDate)
+            queryset = queryset.filter(arrival_hour=hour)
 
         return getTflTimetableEntries(queryset, day, naptan_atco, sequence)
 
