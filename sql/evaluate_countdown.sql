@@ -13,9 +13,9 @@ SELECT snapshot.stop_code_lbsl,
 FROM
 (
 SELECT * from delay_arrivals_full
-WHERE recorded_time = '2015-05-22 09:56:21'
-AND arrival_time BETWEEN '2015-05-22 09:56:21' + INTERVAL 0 MINUTE
-           AND '2015-05-22 09:56:21' + INTERVAL 5 MINUTE
+WHERE recorded_time = '2015-06-02 08:59:37'
+AND arrival_time BETWEEN '2015-06-02 08:59:37' + INTERVAL 0 MINUTE
+           AND '2015-06-02 08:59:37' + INTERVAL 5 MINUTE
 ) AS snapshot
 JOIN
 
