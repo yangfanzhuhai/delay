@@ -63,7 +63,7 @@ INSERT INTO delay_arrivals (stop_code_lbsl,
                             expire_time,
                             recorded_time,
                             run)
-SELECT (stop_code_lbsl,
+SELECT stop_code_lbsl,
         route,
         vehicle_id,
         trip_id,
@@ -71,5 +71,5 @@ SELECT (stop_code_lbsl,
         arrival_time,
         expire_time,
         recorded_time,
-        run)
+        run
 FROM recent_arrivals;
