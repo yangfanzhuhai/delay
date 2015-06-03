@@ -14,30 +14,29 @@ def get_travel_time(bus_sequences, day, hour, baseSequence):
     bus_sequences = bus_sequences.order_by('sequence')
     cumulative_travel_time = 0.0
     curr_cumu = 0.0
+    historical = Timetable.objects.filter(day=day, hour=hour)
     for current, nxt in zip(bus_sequences, bus_sequences[1:]):
         current_stop = current.stop_code_lbsl
         nxt_stop = nxt.stop_code_lbsl
-
-        timetable_object = Timetable.objects.filter(
-            start_stop=current_stop, end_stop=nxt_stop, day=day, hour=hour)
+        timetable_object = historical.filter(start_stop=current_stop,
+                                             end_stop=nxt_stop)
         avg = 0.0
+        cumulative_travel_time += avg
+        index = current.sequence - baseSequence + 1
         if timetable_object.exists():
             avg = float(timetable_object.values()[0]['average_travel_time'])
-        bus_sequences[current.sequence - baseSequence + 1].average_travel_time = avg
-        bus_sequences[current.sequence - baseSequence + 1].cumulative_travel_time = avg + cumulative_travel_time
-        cumulative_travel_time += avg
+        bus_sequences[index].average_travel_time = avg
+        bus_sequences[index].cumulative_travel_time = cumulative_travel_time
 
         curr_avg = 0.0
+        curr_cumu += curr_avg
         current_timetable_object = Current_timetable.objects.filter(
                start_stop=current_stop, end_stop=nxt_stop)
         if current_timetable_object.exists():
             curr_avg = float(current_timetable_object.values()[0]
                              ['average_travel_time'])
-        bus_sequences[current.sequence -
-                      baseSequence + 1].curr_average_travel_time = curr_avg
-        bus_sequences[current.sequence -
-                      baseSequence + 1].curr_cumulative_travel_time = curr_avg + curr_cumu
-        curr_cumu += curr_avg
+        bus_sequences[index].curr_average_travel_time = curr_avg
+        bus_sequences[index].curr_cumulative_travel_time = curr_cumu
 
     return bus_sequences
 

@@ -77,7 +77,7 @@ def connect_to_db():
 
 def insert_arrivals_to_db(conn, arrival):
     cur = conn.cursor()
-    sql_insert = ("INSERT INTO delay_arrivals "
+    sql_insert = ("INSERT INTO current_arrivals "
                   "(stop_code_lbsl, route, run, vehicle_id, trip_id, "
                   "arrival_time, expire_time, arrival_date) "
                   "VALUES (%s, %s, %s, %s, %s, %s, %s, DATE(%s)) ")

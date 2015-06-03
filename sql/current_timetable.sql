@@ -2,10 +2,9 @@ USE delay;
 
 TRUNCATE recent_arrivals;
 
-INSERT INTO recent_arrivals
-SELECT *
-FROM delay_arrivals
-WHERE recorded_time >= DATE_SUB(NOW(),INTERVAL 1 HOUR);
+RENAME TABLE recent_arrivals TO empty_arrivals;
+RENAME TABLE current_arrivals TO recent_arrivals;
+RENAME TABLE empty_arrivals TO current_arrivals;
 
 TRUNCATE current_travel_time_log;
 
@@ -31,6 +30,8 @@ INNER JOIN recent_arrivals AS t2
   AND t1.trip_id = t2.trip_id
   AND t1.vehicle_id = t2.vehicle_id;
 
+
+
 TRUNCATE delay_current_timetable_new;
 
 INSERT INTO delay_current_timetable_new
@@ -52,3 +53,23 @@ FROM delay_current_timetable_old;
 
 RENAME TABLE delay_current_timetable_old TO
   delay_current_timetable_new;
+
+INSERT INTO delay_arrivals (stop_code_lbsl,
+                            route,
+                            vehicle_id,
+                            trip_id,
+                            arrival_date,
+                            arrival_time,
+                            expire_time,
+                            recorded_time,
+                            run)
+SELECT (stop_code_lbsl,
+        route,
+        vehicle_id,
+        trip_id,
+        arrival_date,
+        arrival_time,
+        expire_time,
+        recorded_time,
+        run)
+FROM recent_arrivals;

@@ -1,0 +1,46 @@
+
+siege -c 2 -i -t 1m -d 3 -f random_prediction_urls.txt
+
+Transactions:             26 hits
+Availability:          96.30 %
+Elapsed time:          59.37 secs
+Data transferred:         0.30 MB
+Response time:            2.88 secs
+Transaction rate:         0.44 trans/sec
+Throughput:           0.01 MB/sec
+Concurrency:            1.26
+Successful transactions:          26
+Failed transactions:             1
+Longest transaction:         11.70
+Shortest transaction:         0.05
+
+
+
+siege -c 10 -i -t 1m -d 1 -f random_prediction_urls.txt
+Transactions:             21 hits
+Availability:          87.50 %
+Elapsed time:          59.48 secs
+Data transferred:         0.15 MB
+Response time:           16.21 secs
+Transaction rate:         0.35 trans/sec
+Throughput:           0.00 MB/sec
+Concurrency:            5.72
+Successful transactions:          21
+Failed transactions:             3
+Longest transaction:         29.34
+Shortest transaction:         3.30
+
+
+siege -c 50 -i -t 1m -d 1 -f random_prediction_urls.txt
+Transactions:             12 hits
+Availability:          19.35 %
+Elapsed time:          59.76 secs
+Data transferred:         0.06 MB
+Response time:           16.68 secs
+Transaction rate:         0.20 trans/sec
+Throughput:           0.00 MB/sec
+Concurrency:            3.35
+Successful transactions:          12
+Failed transactions:            50
+Longest transaction:         27.87
+Shortest transaction:         0.00
