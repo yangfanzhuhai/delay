@@ -1,8 +1,5 @@
 USE delay;
 
-TRUNCATE recent_arrivals;
-
-RENAME TABLE recent_arrivals TO empty_arrivals;
 RENAME TABLE current_arrivals TO recent_arrivals;
 RENAME TABLE empty_arrivals TO current_arrivals;
 
@@ -59,24 +56,4 @@ COMMIT;
 RENAME TABLE delay_current_timetable_old TO
   delay_current_timetable_new;
 
-SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
-INSERT INTO delay_arrivals (stop_code_lbsl,
-                            route,
-                            vehicle_id,
-                            trip_id,
-                            arrival_date,
-                            arrival_time,
-                            expire_time,
-                            recorded_time,
-                            run)
-SELECT stop_code_lbsl,
-        route,
-        vehicle_id,
-        trip_id,
-        arrival_date,
-        arrival_time,
-        expire_time,
-        recorded_time,
-        run
-FROM recent_arrivals;
-COMMIT;
+
