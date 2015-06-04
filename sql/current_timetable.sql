@@ -1,7 +1,11 @@
 USE delay;
 
-RENAME TABLE current_arrivals TO recent_arrivals;
-RENAME TABLE empty_arrivals TO current_arrivals;
+TRUNCATE arrivals_last_hour;
+
+INSERT INTO arrivals_last_hour
+SELECT *
+FROM recent_arrivals
+WHERE recorded_time >= DATE_SUB(NOW(),INTERVAL 1 HOUR);
 
 TRUNCATE current_travel_time_log;
 
@@ -19,10 +23,10 @@ SELECT t1.stop_code_lbsl start_stop,
        DAYNAME(t2.arrival_time) day,
        HOUR(t2.arrival_time) hour
 FROM delay_neighbours AS neighbours
-INNER JOIN recent_arrivals AS t1
+INNER JOIN arrivals_last_hour AS t1
   ON t1.stop_code_lbsl = neighbours.start_stop
   AND t1.route = neighbours.route
-INNER JOIN recent_arrivals AS t2
+INNER JOIN arrivals_last_hour AS t2
   ON t2.stop_code_lbsl = neighbours.end_stop
   AND t2.route = neighbours.route
   AND t1.trip_id = t2.trip_id
