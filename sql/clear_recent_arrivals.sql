@@ -1,3 +1,5 @@
+USE delay;
+
 SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
 INSERT INTO delay_arrivals (stop_code_lbsl,
                             route,
