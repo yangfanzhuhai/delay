@@ -2,6 +2,7 @@ import random
 import pickle
 import os.path
 import argparse
+import time
 
 
 def load_object(filename, default):
@@ -21,13 +22,23 @@ def getRandomParams():
     return (run1, routes1, naptan_atco1)
 
 
-def getRandomURL(t):
+def getURL(t, day1, hour1):
     url = ('http://delay.doc.ic.ac.uk:5000/'
            '{}/?day={}&hour={}&run={}'
            '&route={}&naptan_atco={}')
-    day1, hour1 = random.choice(day), random.choice(hour)
     run1, routes1, naptan_atco1 = getRandomParams()
     return url.format(t, day1, hour1, run1, routes1, naptan_atco1)
+
+
+def getRandomURL(t):
+    day1, hour1 = random.choice(day), random.choice(hour)
+    return getURL(t, day1, hour1)
+
+
+def getCurrentURL(t):
+    day1, hour1 = random.choice(day), random.choice(hour)
+    day1, hour1 = time.strftime("%A"), time.strftime("%H")
+    return getURL(t, day1, hour1)
 
 
 run = [1, 2]
@@ -46,4 +57,4 @@ if __name__ == '__main__':
     parser.add_argument("number")
     args = parser.parse_args()
     for i in range(int(args.number)):
-        print(getRandomURL(url_types[args.url_type]))
+        print(getCurrentURL(url_types[args.url_type]))

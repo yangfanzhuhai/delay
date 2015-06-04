@@ -1,0 +1,163 @@
+50
+
+ifting the server siege...      done.
+
+Transactions:            161 hits
+Availability:         100.00 %
+Elapsed time:          59.66 secs
+Data transferred:         1.32 MB
+Response time:           15.63 secs
+Transaction rate:         2.70 trans/sec
+Throughput:           0.02 MB/sec
+Concurrency:           42.18
+Successful transactions:         161
+Failed transactions:             0
+Longest transaction:         21.28
+Shortest transaction:         1.69
+
+100
+Lifting the server siege...      done.
+
+Transactions:            333 hits
+Availability:         100.00 %
+Elapsed time:          59.34 secs
+Data transferred:         2.59 MB
+Response time:           14.78 secs
+Transaction rate:         5.61 trans/sec
+Throughput:           0.04 MB/sec
+Concurrency:           82.97
+Successful transactions:         333
+Failed transactions:             0
+Longest transaction:         21.75
+Shortest transaction:         0.12
+
+150
+Transactions:            316 hits
+Availability:          94.05 %
+Elapsed time:          59.98 secs
+Data transferred:         2.48 MB
+Response time:           19.95 secs
+Transaction rate:         5.27 trans/sec
+Throughput:           0.04 MB/sec
+Concurrency:          105.11
+Successful transactions:         316
+Failed transactions:            20
+Longest transaction:         29.30
+Shortest transaction:         0.00
+
+FILE: /usr/local/var/siege.log
+You can disable this annoying message by editing
+the .siegerc file in your home directory; change
+the directive 'show-logfile' to false.
+
+
+200
+Transactions:            331 hits
+Availability:          81.73 %
+Elapsed time:          59.72 secs
+Data transferred:         2.46 MB
+Response time:           18.75 secs
+Transaction rate:         5.54 trans/sec
+Throughput:           0.04 MB/sec
+Concurrency:          103.95
+Successful transactions:         331
+Failed transactions:            74
+Longest transaction:         29.85
+Shortest transaction:         0.00
+
+250
+Transactions:            310 hits
+Availability:          71.43 %
+Elapsed time:          59.37 secs
+Data transferred:         2.38 MB
+Response time:           19.35 secs
+Transaction rate:         5.22 trans/sec
+Throughput:           0.04 MB/sec
+Concurrency:          101.06
+Successful transactions:         310
+Failed transactions:           124
+Longest transaction:         29.85
+Shortest transaction:         0.18
+
+300
+Transactions:            230 hits
+Availability:          53.49 %
+Elapsed time:          59.37 secs
+Data transferred:         1.74 MB
+Response time:           22.23 secs
+Transaction rate:         3.87 trans/sec
+Throughput:           0.03 MB/sec
+Concurrency:           86.13
+Successful transactions:         230
+Failed transactions:           200
+Longest transaction:         31.21
+Shortest transaction:         0.00
+
+350
+Lifting the server siege...      done.
+
+Transactions:            288 hits
+Availability:          53.63 %
+Elapsed time:          59.44 secs
+Data transferred:         2.26 MB
+Response time:           19.26 secs
+Transaction rate:         4.85 trans/sec
+Throughput:           0.04 MB/sec
+Concurrency:           93.32
+Successful transactions:         288
+Failed transactions:           249
+Longest transaction:         30.38
+Shortest transaction:         0.00
+
+FILE: /usr/local/var/siege.log
+You can disable this annoying message by editing
+the .siegerc file in your home directory; change
+the directive 'show-logfile' to false.
+
+400
+Transactions:            246 hits
+Availability:          43.62 %
+Elapsed time:          59.23 secs
+Data transferred:         1.97 MB
+Response time:           19.02 secs
+Transaction rate:         4.15 trans/sec
+Throughput:           0.03 MB/sec
+Concurrency:           78.98
+Successful transactions:         246
+Failed transactions:           318
+Longest transaction:         37.49
+Shortest transaction:         0.00
+
+450
+Transactions:            298 hits
+Availability:          42.33 %
+Elapsed time:          59.32 secs
+Data transferred:         2.18 MB
+Response time:           19.33 secs
+Transaction rate:         5.02 trans/sec
+Throughput:           0.04 MB/sec
+Concurrency:           97.11
+Successful transactions:         298
+Failed transactions:           406
+Longest transaction:         30.53
+Shortest transaction:         0.00
+
+
+500
+Transactions:            290 hits
+Availability:          41.55 %
+Elapsed time:          59.07 secs
+Data transferred:         2.19 MB
+Response time:           18.46 secs
+Transaction rate:         4.91 trans/sec
+Throughput:           0.04 MB/sec
+Concurrency:           90.62
+Successful transactions:         289
+Failed transactions:           408
+Longest transaction:         31.58
+Shortest transaction:         0.12
+
+FILE: /usr/local/var/siege.log
+You can disable this annoying message by editing
+the .siegerc file in your home directory; change
+the directive 'show-logfile' to false.
