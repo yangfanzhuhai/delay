@@ -1,6 +1,7 @@
 import random
 import pickle
 import os.path
+import argparse
 
 
 def load_object(filename, default):
@@ -37,9 +38,12 @@ hour = list(range(24))
 routes = load_object('routes.p', [])
 naptan_atco = load_object('naptan_atco.p', {})
 
-tfl = 'tfl_timetable'
-pre = 'predictions'
+url_types = {'tfl': 'tfl_timetable', 'pre': 'predictions'}
 
 if __name__ == '__main__':
-    for i in range(10):
-        print(getRandomURL(tfl))
+    parser = argparse.ArgumentParser()
+    parser.add_argument("url_type")
+    parser.add_argument("number")
+    args = parser.parse_args()
+    for i in range(int(args.number)):
+        print(getRandomURL(url_types[args.url_type]))
