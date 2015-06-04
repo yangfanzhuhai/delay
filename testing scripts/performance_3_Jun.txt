@@ -44,3 +44,122 @@ Successful transactions:          12
 Failed transactions:            50
 Longest transaction:         27.87
 Shortest transaction:         0.00
+
+
+After debug
+siege -c 50 -i -t 1m -d 1 -f random_prediction_urls.txt
+Transactions:            238 hits
+Availability:         100.00 %
+Elapsed time:          59.46 secs
+Data transferred:         1.82 MB
+Response time:           11.01 secs
+Transaction rate:         4.00 trans/sec
+Throughput:           0.03 MB/sec
+Concurrency:           44.05
+Successful transactions:         238
+Failed transactions:             0
+Longest transaction:         17.76
+Shortest transaction:         0.54
+
+siege -c 100 -i -t 1m -d 1 -f random_prediction_urls.txt
+Transactions:            310 hits
+Availability:         100.00 %
+Elapsed time:          59.73 secs
+Data transferred:         2.27 MB
+Response time:           15.89 secs
+Transaction rate:         5.19 trans/sec
+Throughput:           0.04 MB/sec
+Concurrency:           82.45
+Successful transactions:         310
+Failed transactions:             0
+Longest transaction:         27.80
+Shortest transaction:         0.10
+
+siege -c 100 -i -t 1m -d 1 -f random_prediction_urls_2.txt
+Transactions:            358 hits
+Availability:         100.00 %
+Elapsed time:          59.81 secs
+Data transferred:         2.68 MB
+Response time:           13.93 secs
+Transaction rate:         5.99 trans/sec
+Throughput:           0.04 MB/sec
+Concurrency:           83.40
+Successful transactions:         358
+Failed transactions:             0
+Longest transaction:         20.29
+Shortest transaction:         0.30
+
+150
+Transactions:            455 hits
+Availability:          98.48 %
+Elapsed time:          59.56 secs
+Data transferred:         3.37 MB
+Response time:           15.78 secs
+Transaction rate:         7.64 trans/sec
+Throughput:           0.06 MB/sec
+Concurrency:          120.56
+Successful transactions:         455
+Failed transactions:             7
+Longest transaction:         29.68
+Shortest transaction:         2.45
+
+300
+Transactions:            244 hits
+Availability:          53.39 %
+Elapsed time:          59.35 secs
+Data transferred:         1.93 MB
+Response time:           19.79 secs
+Transaction rate:         4.11 trans/sec
+Throughput:           0.03 MB/sec
+Concurrency:           81.35
+Successful transactions:         244
+Failed transactions:           213
+Longest transaction:         30.91
+Shortest transaction:         0.40
+
+FILE: /usr/local/var/siege.log
+You can disable this annoying message by editing
+the .siegerc file in your home directory; change
+the directive 'show-logfile' to false.
+
+300 Rerun - with current timetable being updated
+Transactions:            373 hits
+Availability:          68.57 %
+Elapsed time:          59.09 secs
+Data transferred:         2.95 MB
+Response time:           17.98 secs
+Transaction rate:         6.31 trans/sec
+Throughput:           0.05 MB/sec
+Concurrency:          113.52
+Successful transactions:         373
+Failed transactions:           171
+Longest transaction:         30.45
+Shortest transaction:         0.00
+
+300 - no update
+Transactions:            461 hits
+Availability:          75.33 %
+Elapsed time:          59.27 secs
+Data transferred:         3.28 MB
+Response time:           14.22 secs
+Transaction rate:         7.78 trans/sec
+Throughput:           0.06 MB/sec
+Concurrency:          110.57
+Successful transactions:         461
+Failed transactions:           151
+Longest transaction:         29.42
+Shortest transaction:         0.17
+
+500 - no update
+Transactions:            522 hits
+Availability:          58.98 %
+Elapsed time:          59.86 secs
+Data transferred:         3.88 MB
+Response time:           16.35 secs
+Transaction rate:         8.72 trans/sec
+Throughput:           0.06 MB/sec
+Concurrency:          142.58
+Successful transactions:         522
+Failed transactions:           363
+Longest transaction:         35.23
+Shortest transaction:         0.96
