@@ -1,7 +1,5 @@
 USE delay;
 
-FLUSH QUERY CACHE;
-
 TRUNCATE recent_arrivals;
 
 RENAME TABLE recent_arrivals TO empty_arrivals;
