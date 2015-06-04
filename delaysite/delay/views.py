@@ -7,7 +7,6 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 import requests
 import json
-import datetime as dt
 
 
 def get_travel_time(bus_sequences, day, hour, baseSequence):
@@ -92,9 +91,10 @@ def getTflTimetableEntries(queryset, day, naptan_atco, sequence):
             baseSequence = currentSeq[0]
 
     queryset = queryset.filter(sequence__gte=baseSequence).order_by('sequence')
-    baseTravelTime = queryset[0].cumulative_travel_time
-    for entry in queryset:
-        entry.cumulative_travel_time = entry.cumulative_travel_time - baseTravelTime
+    if queryset.exists():
+        baseTravelTime = queryset[0].cumulative_travel_time
+        for entry in queryset:
+            entry.cumulative_travel_time = entry.cumulative_travel_time - baseTravelTime
     return queryset
 
 
