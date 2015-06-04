@@ -4,7 +4,7 @@ TRUNCATE arrivals_last_hour;
 
 INSERT INTO arrivals_last_hour
 SELECT *
-FROM recent_arrivals
+FROM current_arrivals
 WHERE recorded_time >= DATE_SUB(NOW(),INTERVAL 1 HOUR);
 
 TRUNCATE current_travel_time_log;

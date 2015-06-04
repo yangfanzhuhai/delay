@@ -16,3 +16,4 @@ SELECT start_stop, end_stop, day, hour, average_travel_time
 FROM delay_timetable_updated
 ON DUPLICATE KEY UPDATE delay_timetable.average_travel_time = delay_timetable_updated.average_travel_time;
 COMMIT;
+
