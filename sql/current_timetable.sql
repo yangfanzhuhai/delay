@@ -1,6 +1,6 @@
 USE delay;
 
-RESET QUERY CACHE;
+FLUSH QUERY CACHE;
 
 TRUNCATE recent_arrivals;
 
