@@ -7,5 +7,4 @@ python manage.py migrate                  # Apply South's database migrations
 python manage.py compilemessages          # Create translation files
 python manage.py collectstatic --noinput  # Collect static files
 supervisorctl restart gunicorn
-supervisorctl start arrival
 

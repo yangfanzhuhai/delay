@@ -55,7 +55,7 @@ class PredictionsViewSet(viewsets.ModelViewSet):
         naptan_atco = self.request.QUERY_PARAMS.get('naptan_atco', None)
         if route is not None:
             queryset = queryset.filter(route=route)
-        if route is not None:
+        if run is not None:
             queryset = queryset.filter(run=run)
         baseSequence = 1
         if naptan_atco is not None:
