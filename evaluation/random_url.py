@@ -23,9 +23,6 @@ def getRandomParams():
 
 
 def getURL(t, day1, hour1):
-    url = ('http://delay.doc.ic.ac.uk:5000/'
-           '{}/?day={}&hour={}&run={}'
-           '&route={}&naptan_atco={}')
     run1, routes1, naptan_atco1 = getRandomParams()
     return url.format(t, day1, hour1, run1, routes1, naptan_atco1)
 
@@ -36,10 +33,27 @@ def getRandomURL(t):
 
 
 def getCurrentURL(t):
-    day1, hour1 = random.choice(day), random.choice(hour)
     day1, hour1 = time.strftime("%A"), time.strftime("%H")
     return getURL(t, day1, hour1)
 
+
+def getCurrentURLs():
+    day1, hour1 = time.strftime("%A"), time.strftime("%H")
+    run1, routes1, naptan_atco1 = getRandomParams()
+
+    params = {'day': day1, 'hour': hour1, 'run': run1,
+              'route': routes1, 'naptan_atco': naptan_atco1}
+
+    return (url.format(url_types['pre'], day1, hour1,
+                       run1, routes1, naptan_atco1),
+            url.format(url_types['tfl'], day1, hour1,
+                       run1, routes1, naptan_atco1),
+            params)
+
+
+url = ('http://delay.doc.ic.ac.uk:5000/'
+       '{}/?day={}&hour={}&run={}'
+       '&route={}&naptan_atco={}')
 
 run = [1, 2]
 day = ['Monday', 'Tuesday', 'Wednesday', 'Thursday',
