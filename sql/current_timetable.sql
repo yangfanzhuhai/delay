@@ -2,10 +2,12 @@ USE delay;
 
 TRUNCATE arrivals_last_hour;
 
+SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
 INSERT INTO arrivals_last_hour
 SELECT *
 FROM current_arrivals
 WHERE recorded_time >= DATE_SUB(NOW(),INTERVAL 1 HOUR);
+COMMIT;
 
 TRUNCATE current_travel_time_log;
 
