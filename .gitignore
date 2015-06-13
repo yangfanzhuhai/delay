@@ -12,3 +12,7 @@ data/TransXChangeSchemaGuide-2.1-v-45.pdf
 arrival.p
 
 evaluation/random_urls.txt
+
+evaluation/test_cases.p
+
+evaluation/evaluate_api.p

@@ -1,5 +1,4 @@
 import requests
-from requests.auth import HTTPDigestAuth
 import json
 import pymysql
 import sys
