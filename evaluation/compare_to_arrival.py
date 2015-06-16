@@ -5,11 +5,15 @@ import pymysql
 from numpy import std
 
 
-def load_current_predictions():
-    if os.path.isfile("evaluate_api.p"):
-        return pickle.load(open("evaluate_api.p", "rb"))
+def load_current_predictions(f):
+    if os.path.isfile(f):
+        return pickle.load(open(f, "rb"))
     else:
         return {}
+
+
+def printTime(ts):
+    return datetime.datetime.fromtimestamp(ts).strftime('%H:%M:%S')
 
 
 def getTime(l):
@@ -46,10 +50,6 @@ def getDiff(pre, act):
     # return pre - act
 
 
-def getPre(arrival_time, pre):
-    return (arrival_time + datetime.timedelta(seconds=float(pre))).timestamp()
-
-
 def getSTDs(diffs):
     return(std([entry[6] for entry in diffs]),
            std([entry[7] for entry in diffs]),
@@ -66,55 +66,47 @@ def printTitle(value, route, vehicle, naptan_code):
     print(vehicle)
 
 
-def addToDiffs(historical, current, reference, actual_arrivals, diffs,
-               arrival_time):
-    his = getPre(arrival_time, historical)
-    curr = getPre(arrival_time, current)
-    ref = getPre(arrival_time, reference)
-    act = actual_arrivals.timestamp()
-
-    combine = 0.01546162 * float(historical) - 0.01909407 * float(current) + 1.07500769 * reference
-    comb = getPre(arrival_time, combine)
-
-    k = (float(historical),
-         float(current),
-         reference,
-         combine,
-         getDiff(actual_arrivals, arrival_time),
-         his - act,
-         curr - act,
-         ref - act,
-         comb - act)
-    # print(k)
-    diffs.append(k)
-    return diffs
-    # print(his.strftime('%H:%M:%S'),
-    #       curr.strftime('%H:%M:%S'),
-    #       ref.strftime('%H:%M:%S'),
-    #       act.strftime('%H:%M:%S'),
-    #       diffs[-1],
-    #       stop)
-
-
 def processTestCase(key, value, count, cases, cur, sql):
     day, hour, route, run, naptan_code = key
     vehicle = value['next_vehicle']
     arrival_time = getTime(vehicle['arrival_time'])
     stops = value['stops']
     # printTitle(value, route, vehicle, naptan_code)
-
+    # print(key)
     cur.execute(sql, [vehicle['run'], vehicle['route'],
                       vehicle['vehicle_id'], vehicle['trip_id']])
     actual_arrivals = getActualArrivals(cur.fetchall(), stops)
+
+    # print(key)
+    # print(vehicle)
 
     diffs = []
     for index, stop in enumerate(stops):
         try:
             if actual_arrivals[index]:
-                addToDiffs(value['historical'][index],
-                           value['current'][index],
-                           value['reference'][index],
-                           actual_arrivals[index], diffs, arrival_time)
+
+                diffs.append((float(value['historical'][index]),
+                             float(value['current'][index]),
+                             value['reference'][index],
+                             getDiff(actual_arrivals[index], arrival_time)))
+                # if vehicle['vehicle_id'] == 16094 and vehicle['trip_id'] == 73487:
+
+                # if float(value['current'][index]) - getDiff(actual_arrivals[index], arrival_time) >= 900:
+                print()
+                print(value)
+                print('stop', stop)
+                v = value
+                i = index
+                record_time = float(v['record_time'])
+                his = record_time + float(v['historical'][i])
+                cur = record_time + float(v['current'][i])
+                ref = record_time + float(v['reference'][i])
+                his = printTime(his)
+                cur = printTime(cur)
+                ref = printTime(ref)
+                print (his, cur, ref, actual_arrivals[index])
+                print (float(value['historical'][index]), float(value['current'][index]), value['reference'][index])
+                print(float(value['current'][index]) - getDiff(actual_arrivals[index], arrival_time))
         except IndexError:
             continue
     if not diffs:
@@ -123,9 +115,12 @@ def processTestCase(key, value, count, cases, cur, sql):
     return (count, cases)
 
 
-def getTestCases():
-    records = load_current_predictions()
+def getTestCases(f):
+    print('getTestCases')
+    records = load_current_predictions(f)
+    print('loaded Records')
     conn = connect_to_db()
+    print('connected to db')
     cur = conn.cursor()
     sql = ("SELECT * FROM current_arrivals "
            "WHERE run = %s AND route = %s AND vehicle_id = %s "
@@ -134,11 +129,12 @@ def getTestCases():
     count = 0
     cases = []
     for key, value in records.items():
+        # print(key)
         count, cases = processTestCase(key, value, count, cases, cur, sql)
     print(count)
     return cases
 
-cases = getTestCases()
+cases = getTestCases("evaluate_api.p")
 print(cases)
 print(len(cases))
 pickle.dump(cases, open("test_cases.p", "wb"))

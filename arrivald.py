@@ -10,18 +10,11 @@ import threading
 
 
 def connect_to_countdown():
-    # url = ('http://countdown.api.tfl.gov.uk/interfaces/ura/instant_V1'
-    # 'http://countdown.api.tfl.gov.uk/interfaces/ura/instant_V1?ReturnList=StopID,LineName,DirectionID,VehicleID,TripID,EstimatedTime,ExpireTime'
     url = ("http://countdown.api.tfl.gov.uk/interfaces/ura/instant_V1?"
            "ReturnList=StopID,LineName,DirectionID,VehicleID,TripID,"
            "EstimatedTime,ExpireTime")
 
-    r = requests.get(
-        url,
-        # auth=HTTPDigestAuth('LiveBus95085', 'rU9HUx4ZEm'),
-        auth=('LiveBus95085', 'rU9HUx4ZEm'),
-        # stream=True,
-    )
+    r = requests.get(url, auth=('LiveBus95085', 'rU9HUx4ZEm'))
     print("Status Code:", r.status_code)
 
     if r.status_code != requests.codes.ok:
@@ -68,8 +61,6 @@ def connect_to_db():
         port=3306,
         user='delay',
         passwd='CcwLCw3Kcs9Py33T',
-        # user='root',
-        # passwd='dta255dta',
         db='delay')
     return conn
 

@@ -24,7 +24,7 @@ def getPageResult(res):
 
 
 def getArrivalList(key, source):
-    return sorted([entry[key] for entry in source])
+    return [entry[key] for entry in source]
 
 
 def getStops(predictions):
@@ -46,7 +46,9 @@ def getPredictions(pre_res, tfl_res):
     stops = getStops(predictions)
 
     historical = getArrivalList('cumulative_travel_time', predictions)
+    print(historical)
     current = getArrivalList('curr_cumulative_travel_time', predictions)
+    print(current)
     reference = getArrivalList('cumulative_travel_time', tfl_timetable)
     return (historical, current, reference, stops)
 
@@ -152,6 +154,7 @@ for i in range(100):
                 print('next loop')
 
             print("Connecting to endpoints")
+            print(pre_url)
             pre_res, tfl_res = connect(pre_url), connect(tfl_url)
             if pre_res.status_code != requests.codes.ok:
                 continue
